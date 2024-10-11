@@ -20,9 +20,9 @@
 4.les registres contenant l'étalonnage du composant:Les données d'étalonnage se trouvent dans les registres calib00 à calib25, de l'adresse 0x88 à 0xA1.
 
 5.les registres contenant la température (ainsi que le format):
--temp_msb à l'adresse 0xFA (bits 15-8)
--temp_lsb à l'adresse 0xFB (bits 7-0)
--temp_xlsb à l'adresse 0xFC (bits 7-4)
+- temp_msb à l'adresse 0xFA (bits 15-8)
+- temp_lsb à l'adresse 0xFB (bits 7-0)
+- temp_xlsb à l'adresse 0xFC (bits 7-4)
 
 6.les registres contenant la pression (ainsi que le format):
 -press_msb à l'adresse 0xF7 (bits 15-8)
