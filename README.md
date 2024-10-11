@@ -6,7 +6,7 @@
 
 
 
- ###TP 1:
+ ## TP 1:
 **mettre en place la communication entre le microcontrôleur et les capteurs (température, pression, accéléromètre...) via  le bus I²C.**
 Capteur BMP280 :
 
