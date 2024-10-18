@@ -18,7 +18,7 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
-
+#include <string.h>
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 
@@ -51,10 +51,16 @@
 I2C_HandleTypeDef hi2c1;
 
 UART_HandleTypeDef huart4;
+UART_HandleTypeDef huart1;
 UART_HandleTypeDef huart2;
 
 /* USER CODE BEGIN PV */
-
+float temperature = 25.75;
+int pression = 101325;
+float coefficient_k = 1.234;
+float angle = 125.7;
+uint8_t rx_buffer[20];
+uint8_t tx_buffer[50];
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -63,6 +69,8 @@ static void MX_GPIO_Init(void);
 static void MX_USART2_UART_Init(void);
 static void MX_I2C1_Init(void);
 static void MX_UART4_Init(void);
+static void MX_USART1_UART_Init(void);
+void process_command(uint8_t* command);
 /* USER CODE BEGIN PFP */
 
 /* USER CODE END PFP */
@@ -105,11 +113,10 @@ int main(void)
   MX_USART2_UART_Init();
   MX_I2C1_Init();
   MX_UART4_Init();
+  MX_USART1_UART_Init();
   /* USER CODE BEGIN 2 */
 	printf("=======demarage Systeme=======\r\n");
-	//uint8_t bmp280_id = 0;
-	//uint8_t bmp280_ctrl[] = {0,0,0};
-	//uint8_t reg = BMP280_ID_REG;
+
 	//uint8_t reg1 =BMP280_CTRL_MES_REG;
 	//uint8_t reg1 =BMP280_calib25_REG;
 	//uint8_t reg2[] = {BMP280_temp_msb_REG,BMP280_temp_lsb_REG,BMP280_temp_xlsb_REG};
@@ -121,6 +128,8 @@ int main(void)
 	//HAL_I2C_Master_Transmit(&hi2c1, BMP280_I2C_ADDRESS, buf, 2, HAL_MAX_DELAY);
 	//HAL_I2C_Master_Transmit(&hi2c1, BMP280_I2C_ADDRESS, &reg1, 1, HAL_MAX_DELAY);
 	//HAL_I2C_Master_Receive(&hi2c1, BMP280_I2C_ADDRESS, &bmp280_ctrl, 1, HAL_MAX_DELAY);
+	//Buffer de réception et transmission
+
 
 	//printf("Valeur du registre de contrôle (0xF4) : 0x%02X\r\n", bmp280_ctrl);
   /* USER CODE END 2 */
@@ -130,11 +139,41 @@ int main(void)
 	while (1)
 	{
     /* USER CODE END WHILE */
-
+		 HAL_UART_Receive(&huart1, rx_buffer, sizeof(rx_buffer), HAL_MAX_DELAY);
+		 process_command(rx_buffer);
     /* USER CODE BEGIN 3 */
 
 	}
   /* USER CODE END 3 */
+}
+void process_command(uint8_t* command) {
+    if (strncmp((char*)command, "GET_T", 5) == 0) {
+
+        snprintf((char*)tx_buffer, sizeof(tx_buffer), "T=+%.2f_C", temperature);
+        HAL_UART_Transmit(&huart1, tx_buffer, strlen((char*)tx_buffer), HAL_MAX_DELAY);
+
+    } else if (strncmp((char*)command, "GET_P", 5) == 0) {
+
+        snprintf((char*)tx_buffer, sizeof(tx_buffer), "P=%dPa", pression);
+        HAL_UART_Transmit(&huart1, tx_buffer, strlen((char*)tx_buffer), HAL_MAX_DELAY);
+
+    } else if (strncmp((char*)command, "SET_K=", 6) == 0) {
+
+        float new_k = atof((char*)command + 6);
+        coefficient_k = new_k;
+
+
+        snprintf((char*)tx_buffer, sizeof(tx_buffer), "SET_K=OK");
+        HAL_UART_Transmit(&huart1, tx_buffer, strlen((char*)tx_buffer), HAL_MAX_DELAY);
+
+    } else if (strncmp((char*)command, "GET_K", 5) == 0) {
+        snprintf((char*)tx_buffer, sizeof(tx_buffer), "K=%.6f", coefficient_k);
+        HAL_UART_Transmit(&huart1, tx_buffer, strlen((char*)tx_buffer), HAL_MAX_DELAY);
+
+    } else if (strncmp((char*)command, "GET_A", 5) == 0) {
+        snprintf((char*)tx_buffer, sizeof(tx_buffer), "A=%.6f", angle);
+        HAL_UART_Transmit(&huart1, tx_buffer, strlen((char*)tx_buffer), HAL_MAX_DELAY);
+    }
 }
 
 /**
@@ -252,6 +291,39 @@ static void MX_UART4_Init(void)
 }
 
 /**
+  * @brief USART1 Initialization Function
+  * @param None
+  * @retval None
+  */
+static void MX_USART1_UART_Init(void)
+{
+
+  /* USER CODE BEGIN USART1_Init 0 */
+
+  /* USER CODE END USART1_Init 0 */
+
+  /* USER CODE BEGIN USART1_Init 1 */
+
+  /* USER CODE END USART1_Init 1 */
+  huart1.Instance = USART1;
+  huart1.Init.BaudRate = 115200;
+  huart1.Init.WordLength = UART_WORDLENGTH_8B;
+  huart1.Init.StopBits = UART_STOPBITS_1;
+  huart1.Init.Parity = UART_PARITY_NONE;
+  huart1.Init.Mode = UART_MODE_TX_RX;
+  huart1.Init.HwFlowCtl = UART_HWCONTROL_NONE;
+  huart1.Init.OverSampling = UART_OVERSAMPLING_16;
+  if (HAL_UART_Init(&huart1) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  /* USER CODE BEGIN USART1_Init 2 */
+
+  /* USER CODE END USART1_Init 2 */
+
+}
+
+/**
   * @brief USART2 Initialization Function
   * @param None
   * @retval None
@@ -356,3 +428,13 @@ void assert_failed(uint8_t *file, uint32_t line)
   /* USER CODE END 6 */
 }
 #endif /* USE_FULL_ASSERT */
+
+
+
+
+
+
+
+
+
+
