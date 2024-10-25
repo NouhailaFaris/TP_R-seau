@@ -57,9 +57,26 @@ Le décorateur @app.route est utilisé dans Flask pour associer une URL à une f
 5. Rôle du fragment <int:index>
 Le fragment <int:index> dans l'URL permet à Flask de capturer un paramètre de type entier dans l'URL et de le passer à la fonction associée.
 ![image](https://github.com/user-attachments/assets/f4b414c0-6e15-47b0-83ca-4202d69a1bc6)
+```c
+from flask import Flask
+import json
+app = Flask(__name__)
 
+@app.route('/')
+def hello_world():
+    return 'Hello, World!\n'
 
+welcome = "Welcome to 3ESE API!\n"
 
+@app.route('/api/welcome/')
+def api_welcome():
+    return welcome
+
+@app.route('/api/welcome/<int:index>')
+def api_welcome_index(index):
+    return json.dumps({"index": index, "val": welcome[index]})
+
+```
 
 
 
