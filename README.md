@@ -33,7 +33,7 @@
 
 
 
- ## TP 2:
+ ## TP 3:
  **Développement d'une interface REST sur le Raspberry**
   1. Création d'un utilisateur avec droits d'administration et accès au port série :
 ```c
