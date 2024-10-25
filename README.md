@@ -52,7 +52,7 @@ logout
 ssh nouhfari@192.168.88.228
 ```
 
-**fichier nommé requirement.txt**
+**fichier requirement.txt**
 
 ![image](https://github.com/user-attachments/assets/0e661ee0-9e57-47f6-a517-9a58d3ce1fb1)
 
