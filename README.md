@@ -75,6 +75,9 @@ Le fragment <int:index> dans l'URL permet à Flask de capturer un paramètre de 
 
 ![image](https://github.com/user-attachments/assets/f4b414c0-6e15-47b0-83ca-4202d69a1bc6)
 
+![image](https://github.com/user-attachments/assets/ad501736-66cf-45b2-9a8f-d851b8dcc8dd)
+
+On determinant l'index on peut visualiser le caractére qui correspondant dans le tableau welcome  
 
 **Definition JSON:**
 
@@ -103,9 +106,8 @@ def api_welcome_index(index):
 
 ![image](https://github.com/user-attachments/assets/e78eabd7-24c0-4d10-9f62-f0874ecf9f83)
 
-![image](https://github.com/user-attachments/assets/ad501736-66cf-45b2-9a8f-d851b8dcc8dd)
 
-On peut bien remarquer que la type n'est pas du JSON c'est du html
+On peut bien remarquer que le type n'est pas du JSON c'est du html
 
 ![image](https://github.com/user-attachments/assets/e0ae9f05-016d-420f-a792-6975e0b60355)
 
