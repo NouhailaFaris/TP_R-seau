@@ -45,6 +45,7 @@ sudo usermod -aG dialout nouhfari  # Donnez l'accès au port série (dialout)
 logout
 ssh nouhfari@192.168.88.228
  
+![image](https://github.com/user-attachments/assets/0e661ee0-9e57-47f6-a517-9a58d3ce1fb1)
 
 ![image](https://github.com/user-attachments/assets/e88737cb-7fa9-4cff-96d1-d3b345701e84)
 
