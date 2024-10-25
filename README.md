@@ -65,7 +65,7 @@ ssh nouhfari@192.168.88.228
 
 ### Première route
 
-** Rôle du décorateur @app.route **
+**Rôle du décorateur @app.route**
 
 Le décorateur @app.route est utilisé dans Flask pour associer une URL à une fonction. Chaque fois qu'un utilisateur accède à une URL correspondant à celle spécifiée par le décorateur, la fonction Python associée est exécutée.
 
