@@ -105,6 +105,8 @@ def api_welcome_index(index):
 
 ![image](https://github.com/user-attachments/assets/ad501736-66cf-45b2-9a8f-d851b8dcc8dd)
 
+On peut bien remarquer que la type n'est pas du JSON c'est du html
+
 ![image](https://github.com/user-attachments/assets/e0ae9f05-016d-420f-a792-6975e0b60355)
 
 **2éme solution**
