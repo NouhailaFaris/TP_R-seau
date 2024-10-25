@@ -111,11 +111,15 @@ On peut bien remarquer que le type n'est pas du JSON c'est du html
 
 ![image](https://github.com/user-attachments/assets/e0ae9f05-016d-420f-a792-6975e0b60355)
 
+Ici on a du Json mais c'est nous qui ont forcer ce type avec cette solution
+
 **2éme solution**
 
 ![image](https://github.com/user-attachments/assets/807e1bbe-2fc0-4a34-a5d6-55079b35b375)
 
 ![image](https://github.com/user-attachments/assets/3f0a2248-1beb-4af9-9b46-cc1bd0b2e30d)
+
+cette solution est meilleure puiqu'on Jsonify le python donc on retrouve que notre python est convertit on json 
 
 
 
