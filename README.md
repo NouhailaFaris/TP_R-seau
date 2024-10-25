@@ -34,7 +34,7 @@
 
 
  ## TP 2:
- **Développement d'une interface REST sur le Raspberry
+ **Développement d'une interface REST sur le Raspberry**
  
 
 ![image](https://github.com/user-attachments/assets/e88737cb-7fa9-4cff-96d1-d3b345701e84)
