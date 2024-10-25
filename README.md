@@ -35,16 +35,18 @@
 
  ## TP 3:
  **Développement d'une interface REST sur le Raspberry**
-  1. Création d'un utilisateur avec droits d'administration et accès au port série :
+  1. Installation :
+Création d'un utilisateur avec droits d'administration et accès au port série
 ```c
 sudo adduser nouhfari  # Remplacez XXX par le nom de votre utilisateur
 sudo usermod -aG sudo nouhfari  # Ajoutez l'utilisateur au groupe sudo
 sudo usermod -aG dialout nouhfari  # Donnez l'accès au port série (dialout)
 ```
-3. Délogguez vous, puis relogguez vous en tant que nouhfari
+Délogguez vous, puis relogguez vous en tant que nouhfari
+```c
 logout
 ssh nouhfari@192.168.88.228
- 
+``` 
 ![image](https://github.com/user-attachments/assets/0e661ee0-9e57-47f6-a517-9a58d3ce1fb1)
 
 ![image](https://github.com/user-attachments/assets/e88737cb-7fa9-4cff-96d1-d3b345701e84)
