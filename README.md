@@ -122,6 +122,37 @@ Ici on a du Json mais c'est nous qui ont forcer ce type avec cette solution
 cette solution est meilleure puiqu'on Jsonify le python donc on retrouve que notre python est convertit on json 
 
 
+from flask import Flask, jsonify, abort
+
+app = Flask(__name__)
+
+@app.route('/')
+def hello_world():
+    return 'Hello, World!\n'
+
+welcome = "Welcome to 3ESE API!\n"
+
+@app.route('/api/welcome/')
+def api_welcome():
+    return welcome
+
+@app.route('/api/welcome/<int:index>')
+def api_welcome_index(index):
+    if 0 <= index < len(welcome):
+        return jsonify({"index": index, "val": welcome[index]})
+    else:
+        abort(404)
+
+@app.errorhandler(404)
+def page_not_found(error):
+    return jsonify({"error": "Page not found"}), 404
+
+
+![image](https://github.com/user-attachments/assets/7e51c079-0691-45fa-8c86-e70f57b1fb7e)
+
+
+
+
 
 
 
