@@ -46,7 +46,8 @@ sudo usermod -aG dialout nouhfari  # Donnez l'accès au port série (dialout)
 ```c
 logout
 ssh nouhfari@192.168.88.228
-``` 
+```
+**fichier nommé requirement.txt**
 ![image](https://github.com/user-attachments/assets/0e661ee0-9e57-47f6-a517-9a58d3ce1fb1)
 
 ###Premier fichier Web:
@@ -54,11 +55,13 @@ ssh nouhfari@192.168.88.228
 
 ![image](https://github.com/user-attachments/assets/608c2056-3cbd-4b61-8d35-c533d10f2a03)
 
+###Première route
+***Rôle du décorateur @app.route***
 
-4. Rôle du décorateur @app.route
 Le décorateur @app.route est utilisé dans Flask pour associer une URL à une fonction. Chaque fois qu'un utilisateur accède à une URL correspondant à celle spécifiée par le décorateur, la fonction Python associée est exécutée.
 
-5. Rôle du fragment <int:index>
+***Rôle du fragment <int:index>***
+
 Le fragment <int:index> dans l'URL permet à Flask de capturer un paramètre de type entier dans l'URL et de le passer à la fonction associée.
 ![image](https://github.com/user-attachments/assets/f4b414c0-6e15-47b0-83ca-4202d69a1bc6)
 ```c
@@ -81,7 +84,8 @@ def api_welcome_index(index):
     return json.dumps({"index": index, "val": welcome[index]})
 
 ```
-**Definition**
+**Definition ISON:**
+
 En Python, json (JavaScript Object Notation) est un module standard utilisé pour encoder et décoder des données au format JSON, un format de texte léger pour l'échange de données. JSON est couramment utilisé pour transmettre des données entre un serveur et un client (par exemple, dans des APIs web) grâce à sa simplicité et à sa compatibilité avec de nombreux langages de programmation.
 
 
