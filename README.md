@@ -75,6 +75,11 @@ Le fragment <int:index> dans l'URL permet à Flask de capturer un paramètre de 
 
 ![image](https://github.com/user-attachments/assets/f4b414c0-6e15-47b0-83ca-4202d69a1bc6)
 
+
+**Definition JSON:**
+
+En Python, json (JavaScript Object Notation) est un module standard utilisé pour encoder et décoder des données au format JSON, un format de texte léger pour l'échange de données. JSON est couramment utilisé pour transmettre des données entre un serveur et un client (par exemple, dans des APIs web) grâce à sa simplicité et à sa compatibilité avec de nombreux langages de programmation.
+
 ```c
 from flask import Flask
 import json
@@ -95,11 +100,6 @@ def api_welcome_index(index):
     return json.dumps({"index": index, "val": welcome[index]})
 
 ```
-**Definition ISON:**
-
-En Python, json (JavaScript Object Notation) est un module standard utilisé pour encoder et décoder des données au format JSON, un format de texte léger pour l'échange de données. JSON est couramment utilisé pour transmettre des données entre un serveur et un client (par exemple, dans des APIs web) grâce à sa simplicité et à sa compatibilité avec de nombreux langages de programmation.
-
-
 
 
 
