@@ -108,6 +108,7 @@ def api_welcome_index(index):
 ![image](https://github.com/user-attachments/assets/e0ae9f05-016d-420f-a792-6975e0b60355)
 
 **2éme solution**
+
 ![image](https://github.com/user-attachments/assets/807e1bbe-2fc0-4a34-a5d6-55079b35b375)
 
 ![image](https://github.com/user-attachments/assets/3f0a2248-1beb-4af9-9b46-cc1bd0b2e30d)
