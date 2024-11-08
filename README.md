@@ -157,5 +157,11 @@ def page_not_found(error):
 ![WhatsApp Image 2024-10-25 at 11 46 03](https://github.com/user-attachments/assets/a661c525-4e84-4cdb-949f-746ede889136)
 
 # Tp4
-## Calcul Prescaller 
+##  Configuration CAN
+
+
+![image](https://github.com/user-attachments/assets/77538c80-8f19-4b30-8ace-854c0075aa64)
+![image](https://github.com/user-attachments/assets/2e20b4c8-96e1-456b-a587-8ff39b89f5c7)
+
+
 
