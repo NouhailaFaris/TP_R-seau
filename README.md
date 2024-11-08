@@ -30,7 +30,10 @@
 - press_xlsb à l'adresse 0xF9 (bits 7-4)
 
 7. les fonctions permettant le calcul de la température et de la pression compensées, en format entier 32 bits:
-
+ ## TP 2:
+ # Capteur BMP280:
+ 
+ 
 
 
  ## TP 3:
