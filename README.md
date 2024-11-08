@@ -33,7 +33,8 @@
  ## TP 2:
  # Capteur BMP280:
  
- 
+ ![image](https://github.com/user-attachments/assets/699f7c2b-98b5-45b4-aaf3-fce52dec93c4)
+
 
 
  ## TP 3:
