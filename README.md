@@ -131,6 +131,10 @@ printf("Valeur du registre de contrôle (0xF4) : 0x%02X\r\n", bmp280_ctrl);
 
  ![image](https://github.com/user-attachments/assets/f8de9a36-e626-463b-8ec6-9aaa9afbc1b2)
 
+ # Récupération de l'étalonnage, de la température et de la pression
+
+ ![image](https://github.com/user-attachments/assets/136f1959-bfd9-4d44-8567-f35044e979a9)
+
 
  ## TP 2:
  
