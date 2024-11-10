@@ -37,7 +37,7 @@
 
 # Identification du BMP280
 
-
+'''c
  /* USER CODE BEGIN PD */ 
 
 #define BMP280_I2C_ADDRESS 0x77 << 1 
@@ -73,7 +73,7 @@ printf("registre ID: 0x%02X\r\n", bmp280_id);
 /* USER CODE END 2 */ 
 
 } 
-
+'''
  
  ## TP 2:
 
