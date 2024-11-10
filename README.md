@@ -85,11 +85,11 @@ printf("Id: 0x%x...", buf[0]);
 }
 
 ```
-=> le contenu du registre correspond bien à la datasheet:
+** le contenu du registre correspond bien à la datasheet:
 
 ![image](https://github.com/user-attachments/assets/8f9a9f1e-26c8-4432-89ab-7fab195d8874)
 
-=> Vérifiez à l'oscilloscope que la formes des trames I²C est conforme:
+** Vérifiez à l'oscilloscope que la formes des trames I²C est conforme:
 
 ### Configuration du BMP280
 
