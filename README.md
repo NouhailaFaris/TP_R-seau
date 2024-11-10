@@ -131,7 +131,7 @@ printf("Valeur du registre de contrôle (0xF4) : 0x%02X\r\n", bmp280_ctrl);
  
  ## TP 2:
  
-** Préparation du Raspberry
+**Préparation du Raspberry
 
  ![image](https://github.com/user-attachments/assets/94f776dd-35a3-4498-9f7a-2e10c8755ed6)
 
