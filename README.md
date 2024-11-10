@@ -35,6 +35,45 @@
 
  ![image](https://github.com/user-attachments/assets/2d6e6b36-20b6-44f5-a11b-88a4bfdd816c)
 
+# Identification du BMP280
+
+
+ /* USER CODE BEGIN PD */ 
+
+#define BMP280_I2C_ADDRESS 0x77 << 1 
+
+#define BMP280_ID_REG 0xD0 
+
+/* USER CODE END PD */ 
+
+ 
+
+int main(void) 
+
+{ 
+
+ 
+
+/* USER CODE BEGIN 2 */ 
+
+printf("=======demarage Systeme=======\r\n"); 
+
+uint8_t reg = BMP280_ID_REG; 
+
+uint8_t bmp280_id = 0; 
+
+HAL_I2C_Master_Transmit(&hi2c1, BMP280_I2C_ADDRESS, &reg, 1, HAL_MAX_DELAY); 
+
+HAL_I2C_Master_Receive(&hi2c1, BMP280_I2C_ADDRESS, &bmp280_id, 1, HAL_MAX_DELAY); 
+
+printf("registre ID: 0x%02X\r\n", bmp280_id); 
+
+ 
+
+/* USER CODE END 2 */ 
+
+} 
+
  
  ## TP 2:
 
