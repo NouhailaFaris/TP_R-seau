@@ -76,6 +76,44 @@ printf("registre ID: 0x%02X\r\n", bmp280_id);
 }
 
 ```
+
+# Configuration du BMP280
+
+```c
+
+/* USER CODE BEGIN PD */ 
+
+#define BMP280_CTRL_MES_REG 0xF4 
+
+/* USER CODE END PD */ 
+
+ 
+
+int main(void) 
+
+{ 
+
+/* USER CODE BEGIN 2 */ 
+
+printf("=======demarage Systeme=======\r\n"); 
+
+uint8_t reg1 = BMP280_CTRL_MES_REG; 
+
+uint8_t buf[2]; 
+
+buf[1]=reg1; 
+
+buf[2]=0x57; 
+
+HAL_I2C_Master_Transmit(&hi2c1, BMP280_I2C_ADDRESS, buf, 2, HAL_MAX_DELAY); 
+
+HAL_I2C_Master_Transmit(&hi2c1, BMP280_I2C_ADDRESS, &reg1, 1, HAL_MAX_DELAY); 
+
+HAL_I2C_Master_Receive(&hi2c1, BMP280_I2C_ADDRESS, &bmp280_ctrl, 1, HAL_MAX_DELAY); 
+
+printf("Valeur du registre de contrôle (0xF4) : 0x%02X\r\n", bmp280_ctrl);
+
+```
  
  ## TP 2:
 
