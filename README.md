@@ -128,7 +128,10 @@ HAL_I2C_Master_Receive(&hi2c1, BMP280_I2C_ADDRESS, &bmp280_ctrl, 1, HAL_MAX_DELA
 printf("Valeur du registre de contrôle (0xF4) : 0x%02X\r\n", bmp280_ctrl);
 
 ```
- 
+
+ ![image](https://github.com/user-attachments/assets/f8de9a36-e626-463b-8ec6-9aaa9afbc1b2)
+
+
  ## TP 2:
  
 **Préparation du Raspberry**
