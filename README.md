@@ -130,10 +130,11 @@ printf("Valeur du registre de contrôle (0xF4) : 0x%02X\r\n", bmp280_ctrl);
 ```
  
  ## TP 2:
-
- # Capteur BMP280:
  
- ![image](https://github.com/user-attachments/assets/699f7c2b-98b5-45b4-aaf3-fce52dec93c4)
+** Préparation du Raspberry
+
+ ![image](https://github.com/user-attachments/assets/94f776dd-35a3-4498-9f7a-2e10c8755ed6)
+
 
 
 
