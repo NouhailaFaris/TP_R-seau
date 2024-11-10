@@ -134,7 +134,206 @@ printf("Valeur du registre de contrôle (0xF4) : 0x%02X\r\n", bmp280_ctrl);
  # Récupération de l'étalonnage, de la température et de la pression
 
  ![image](https://github.com/user-attachments/assets/136f1959-bfd9-4d44-8567-f35044e979a9)
+**Interfaçage de l'accléromètre**
+**BMP280_simple.h**
+```c
+/*
+ * BMP280.h
+ *
+ *  Created on: Oct 3, 2020
+ *      Author: cbares
+ */
 
+#ifndef SRC_BMP280_SIMPLE_H_
+#define SRC_BMP280_SIMPLE_H_
+#ifndef MPU9250_H
+#define MPU9250_H
+
+#define MPU9250_ADDR         0x68  // Adresse I2C par défaut du MPU-9250
+#define MPU9250_WHO_AM_I     0x75  // Registre ID pour le MPU-9250
+#define MPU9250_WHO_AM_I_VAL 0x71  // Valeur d'ID pour le MPU-9250
+#define MPU9250_PWR_MGMT_1   0x6B  // Registre de gestion d'alimentation
+#define MPU9250_ACCEL_XOUT_H 0x3B  // Premier registre de données pour les axes X, Y, Z de l'accéléromètre
+
+typedef uint32_t BMP280_U32_t;
+typedef int32_t BMP280_S32_t;
+typedef int64_t BMP280_S64_t;
+
+static const uint8_t BMP280_ADDR = 0x77 << 1; // Use 8-bit address
+// static const uint8_t BMP280_ADDR = 0x76 << 1; // Use 8-bit address
+
+static const uint8_t BMP280_ID_REG = 0xD0;
+static const uint8_t BMP280_ID_LEN = 1;
+static const uint8_t BMP280_ID_VAL = 0x58;
+
+static const uint8_t BMP280_CTRL_MEAS_REG = 0xF4;
+
+static const uint8_t BMP280_PRES_REG_MSB = 0xF7;
+static const uint8_t BMP280_PRES_LEN = 3;
+
+static const uint8_t BMP280_TEMP_REG_MSB = 0xFA;
+static const uint8_t BMP280_TEMP_LEN = 3;
+
+static const uint8_t BMP280_TRIM_REG_MSB = 0x88;
+static const uint8_t BMP280_TRIM_LEN = 12 * 2;
+
+//uint8_t temp_calib[3];
+//uint8_t pres_calib[3];
+
+int BMP280_check();
+int BMP280_init();
+BMP280_S32_t BMP280_get_temperature();
+int BMP280_get_pressure();
+uint8_t* BMP280_Read_Reg(uint8_t reg, uint8_t value);
+int BMP280_Write_Reg(uint8_t reg, uint8_t value);
+int MPU9250_check();
+int MPU9250_init();
+void MPU9250_read_acceleration(int16_t *x, int16_t *y, int16_t *z);
+
+#endif // MPU9250_H
+
+#endif /* SRC_BMP280_H_ */
+```
+**BMP280_simple.c**
+```c
+/*
+ * BMP280.c
+ *
+ *  Created on: Oct 3, 2020
+ *      Author: cbares
+ */
+
+#include "stdio.h"
+#include "stdlib.h"
+
+#include "main.h"
+#include "BMP280_simple.h"
+
+extern I2C_HandleTypeDef hi2c1;
+
+uint16_t dig_T1;
+int16_t dig_T2;
+int16_t dig_T3;
+uint16_t dig_P1;
+int16_t dig_P2;
+int16_t dig_P3;
+int16_t dig_P4;
+int16_t dig_P5;
+int16_t dig_P6;
+int16_t dig_P7;
+int16_t dig_P8;
+int16_t dig_P9;
+
+
+BMP280_S32_t t_fine;
+
+
+int MPU9250_check() {
+    uint8_t buf[1];
+    HAL_StatusTypeDef ret;
+
+    buf[0] = MPU9250_WHO_AM_I;
+    ret = HAL_I2C_Master_Transmit(&hi2c1, MPU9250_ADDR << 1, buf, 1, HAL_MAX_DELAY);
+    if (ret != HAL_OK) {
+        printf("Erreur I2C Transmit pour MPU-9250 Check\r\n");
+        return 1;
+    }
+
+    ret = HAL_I2C_Master_Receive(&hi2c1, MPU9250_ADDR << 1, buf, 1, HAL_MAX_DELAY);
+    if (ret != HAL_OK) {
+        printf("Erreur I2C Receive pour MPU-9250 Check\r\n");
+        return 1;
+    }
+
+    printf("MPU-9250 ID: 0x%x...", buf[0]);
+    return (buf[0] == MPU9250_WHO_AM_I_VAL) ? 0 : 1;
+}
+
+
+int MPU9250_init() {
+    uint8_t buf[2];
+    HAL_StatusTypeDef ret;
+
+    // Sortir de l'état de veille
+    buf[0] = MPU9250_PWR_MGMT_1;
+    buf[1] = 0x00;  // Clear sleep bit
+    ret = HAL_I2C_Master_Transmit(&hi2c1, MPU9250_ADDR << 1, buf, 2, HAL_MAX_DELAY);
+    if (ret != HAL_OK) {
+        printf("Erreur configuration Power Management pour MPU-9250\r\n");
+        return 1;
+    }
+
+    printf("Configuration MPU-9250 réussie\r\n");
+    return 0;
+}
+
+void MPU9250_read_acceleration(int16_t *x, int16_t *y, int16_t *z) {
+    uint8_t buf[6];
+    HAL_StatusTypeDef ret;
+
+    // Lecture des données d'accélération
+    ret = HAL_I2C_Master_Transmit(&hi2c1, MPU9250_ADDR << 1, (uint8_t *)MPU9250_ACCEL_XOUT_H, 1, HAL_MAX_DELAY);
+    if (ret != HAL_OK) {
+        printf("Erreur I2C Transmit pour MPU-9250\r\n");
+        return;
+    }
+
+    ret = HAL_I2C_Master_Receive(&hi2c1, MPU9250_ADDR << 1, buf, 6, HAL_MAX_DELAY);
+    if (ret != HAL_OK) {
+        printf("Erreur I2C Receive pour MPU-9250\r\n");
+        return;
+    }
+
+    *x = (int16_t)((buf[0] << 8) | buf[1]);
+    *y = (int16_t)((buf[2] << 8) | buf[3]);
+    *z = (int16_t)((buf[4] << 8) | buf[5]);
+
+    printf("Acceleration - X: %d, Y: %d, Z: %d\r\n", *x, *y, *z);
+}
+
+```
+**main.c**
+```c
+// main.c
+#include "main.h"
+#include "MPU9250.h"
+#include "stdio.h"
+
+// Redirection du printf pour UART (si nécessaire)
+int __io_putchar(int ch) {
+    HAL_UART_Transmit(&huart2, (uint8_t*)&ch, 1, HAL_MAX_DELAY);
+    return ch;
+}
+
+int main(void) {
+    HAL_Init();
+    SystemClock_Config();
+    MX_GPIO_Init();
+    MX_I2C1_Init();
+
+    printf("Vérification du MPU-9250...\r\n");
+    if (MPU9250_check() == 0) {
+        printf("MPU-9250 détecté avec succès!\r\n");
+    } else {
+        printf("Erreur: MPU-9250 non détecté.\r\n");
+        while (1);
+    }
+
+    if (MPU9250_init() == 0) {
+        printf("Initialisation du MPU-9250 réussie.\r\n");
+    } else {
+        printf("Erreur d'initialisation du MPU-9250.\r\n");
+        while (1);
+    }
+
+    int16_t accel_x, accel_y, accel_z;
+
+    while (1) {
+        MPU9250_read_acceleration(&accel_x, &accel_y, &accel_z);
+        HAL_Delay(1000);
+    }
+}
+```
 
  ## TP 2:
  
