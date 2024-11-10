@@ -69,7 +69,14 @@ HAL_I2C_Master_Transmit(&hi2c1, BMP280_I2C_ADDRESS, &reg, 1, HAL_MAX_DELAY); //e
 
 HAL_I2C_Master_Receive(&hi2c1, BMP280_I2C_ADDRESS, &bmp280_id, 1, HAL_MAX_DELAY); //recevoir 1 octet correspondant au contenu du registre
 
-printf("registre ID: 0x%02X\r\n", bmp280_id); 
+printf("Id: 0x%x...", buf[0]);
+	if (buf[0] == BMP280_ID_VAL) {
+		printf("Ok\r\n");
+		return 0;
+	} else {
+		printf("not Ok!\r\n");
+		return 1;
+	}
 
  
 
