@@ -30,6 +30,7 @@
 - press_xlsb à l'adresse 0xF9 (bits 7-4)
 
 7. les fonctions permettant le calcul de la température et de la pression compensées, en format entier 32 bits:
+![image](https://github.com/user-attachments/assets/1762f883-cabb-47ad-8956-99a91d7de897)
 
 # Test de la chaîne de compilation et communication UART sur USB
 
