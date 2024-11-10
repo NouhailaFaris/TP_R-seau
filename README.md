@@ -30,13 +30,14 @@
 - press_xlsb à l'adresse 0xF9 (bits 7-4)
 
 7. les fonctions permettant le calcul de la température et de la pression compensées, en format entier 32 bits:
+
 ![image](https://github.com/user-attachments/assets/1762f883-cabb-47ad-8956-99a91d7de897)
 
-# Test de la chaîne de compilation et communication UART sur USB
+### Test de la chaîne de compilation et communication UART sur USB
 
  ![image](https://github.com/user-attachments/assets/2d6e6b36-20b6-44f5-a11b-88a4bfdd816c)
 
-# Identification du BMP280
+### Identification du BMP280
 
 ```c
 
@@ -64,9 +65,9 @@ uint8_t reg = BMP280_ID_REG;
 
 uint8_t bmp280_id = 0; 
 
-HAL_I2C_Master_Transmit(&hi2c1, BMP280_I2C_ADDRESS, &reg, 1, HAL_MAX_DELAY); 
+HAL_I2C_Master_Transmit(&hi2c1, BMP280_I2C_ADDRESS, &reg, 1, HAL_MAX_DELAY); //envoyer l'adresse du registre ID
 
-HAL_I2C_Master_Receive(&hi2c1, BMP280_I2C_ADDRESS, &bmp280_id, 1, HAL_MAX_DELAY); 
+HAL_I2C_Master_Receive(&hi2c1, BMP280_I2C_ADDRESS, &bmp280_id, 1, HAL_MAX_DELAY); //recevoir 1 octet correspondant au contenu du registre
 
 printf("registre ID: 0x%02X\r\n", bmp280_id); 
 
