@@ -134,7 +134,9 @@ printf("Valeur du registre de contrôle (0xF4) : 0x%02X\r\n", bmp280_ctrl);
  # Récupération de l'étalonnage, de la température et de la pression
 
  ![image](https://github.com/user-attachments/assets/136f1959-bfd9-4d44-8567-f35044e979a9)
+ 
 **Interfaçage de l'accléromètre**
+
 **BMP280_simple.h**
 ```c
 /*
