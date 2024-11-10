@@ -31,6 +31,11 @@
 
 7. les fonctions permettant le calcul de la température et de la pression compensées, en format entier 32 bits:
  ## TP 2:
+
+ #Test de la chaîne de compilation et communication UART sur USB
+
+ ![image](https://github.com/user-attachments/assets/2d6e6b36-20b6-44f5-a11b-88a4bfdd816c)
+
  # Capteur BMP280:
  
  ![image](https://github.com/user-attachments/assets/699f7c2b-98b5-45b4-aaf3-fce52dec93c4)
