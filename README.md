@@ -91,7 +91,7 @@ printf("Id: 0x%x...", buf[0]);
 
 => Vérifiez à l'oscilloscope que la formes des trames I²C est conforme:
 
-# Configuration du BMP280
+### Configuration du BMP280
 
 ```c
 
