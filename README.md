@@ -86,6 +86,9 @@ printf("Id: 0x%x...", buf[0]);
 
 ```
 
+![image](https://github.com/user-attachments/assets/8f9a9f1e-26c8-4432-89ab-7fab195d8874)
+
+
 # Configuration du BMP280
 
 ```c
