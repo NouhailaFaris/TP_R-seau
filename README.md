@@ -137,6 +137,9 @@ printf("Valeur du registre de contrôle (0xF4) : 0x%02X\r\n", bmp280_ctrl);
  
 **Interfaçage de l'accléromètre**
 
+![image](https://github.com/user-attachments/assets/bf406e71-3157-4ac5-8568-c7c07a1db3f0)
+
+
 **BMP280_simple.h**
 ```c
 /*
