@@ -348,6 +348,21 @@ int main(void) {
 
  ![image](https://github.com/user-attachments/assets/2697a3e5-2ef1-443b-a6ca-087e84e0d57e)
 
+**Connexion SSH :**
+![image](https://github.com/user-attachments/assets/06dd0bb4-5c9b-4916-a870-c02d4f86b695)
+
+**installation minicom**
+```
+sudo apt update
+sudo apt install minicom
+```
+**configuration minicom**
+![image](https://github.com/user-attachments/assets/7440a819-35a6-43c9-8d32-0b3d0156ebb5)
+
+**Test minicom**
+![image](https://github.com/user-attachments/assets/f2a962d3-000d-4299-931e-9e45f2eff4c5)
+
+## Communication avec la STM32:
 
 
 
@@ -433,14 +448,16 @@ On peut bien remarquer que le type n'est pas du JSON c'est du html
 Ici on a du Json mais c'est nous qui ont forcer ce type avec cette solution
 
 **2éme solution**
-
+**teste jsonify** 
 ![image](https://github.com/user-attachments/assets/807e1bbe-2fc0-4a34-a5d6-55079b35b375)
 
 ![image](https://github.com/user-attachments/assets/3f0a2248-1beb-4af9-9b46-cc1bd0b2e30d)
 
 cette solution est meilleure puiqu'on Jsonify le python donc on retrouve que notre python est convertit on json 
 
+### Erreur 404
 
+```py
 from flask import Flask, jsonify, abort
 
 app = Flask(__name__)
@@ -465,7 +482,7 @@ def api_welcome_index(index):
 @app.errorhandler(404)
 def page_not_found(error):
     return jsonify({"error": "Page not found"}), 404
-
+```
 
 ![image](https://github.com/user-attachments/assets/7e51c079-0691-45fa-8c86-e70f57b1fb7e)
 
