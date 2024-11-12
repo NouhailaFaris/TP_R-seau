@@ -788,6 +788,13 @@ void assert_failed(uint8_t *file, uint32_t line)
 #endif /* USE_FULL_ASSERT */
 ```
 
+**python**
+
+![image](https://github.com/user-attachments/assets/e9673bb0-6ff2-4119-9b4b-29b261d2049a)
+
+
+
+
 
  ## TP 3:
  **Développement d'une interface REST sur le Raspberry**
