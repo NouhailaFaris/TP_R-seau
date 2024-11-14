@@ -1,12 +1,15 @@
 # TP_R-seau
 
 ## Objectif de TP:
+
  mettre en place l'ensemble des composants suivant:
+ 
  ![image](https://github.com/user-attachments/assets/7d0f6780-9d64-4791-b3f1-35c563478f4d)
 
 
 
- ## TP 1:
+ ## TP 1:Bus I2C
+ 
 **mettre en place la communication entre le microcontrôleur et les capteurs (température, pression, accéléromètre...) via  le bus I²C.**
 
 ### Capteur BMP280 :
