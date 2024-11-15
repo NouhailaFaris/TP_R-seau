@@ -179,7 +179,45 @@ sudo apt install minicom
 ![image](https://github.com/user-attachments/assets/f2a962d3-000d-4299-931e-9e45f2eff4c5)
 
 ### Communication avec la STM32:
+```
+void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart) {
+	if (huart->Instance == UART4) {
+		printf("Commande reçue : %s\r\n", rxBuffer);
+    	handleCommand(rxBuffer);
 
+        memset(rxBuffer, 0, RX_BUFFER_SIZE);
+
+
+        HAL_UART_Receive_IT(&huart4, (uint8_t *)rxBuffer, RX_BUFFER_SIZE);
+    }
+}
+
+void handleCommand(char *command) {
+    if (strncmp(command, "GET_T", 5) == 0) {
+        // Affiche la température correctement formatée
+        snprintf(txBuffer, sizeof(txBuffer), "T=+%dC\r\n", temperature);  // Utilisation correcte du format %f
+    } else if (strncmp(command, "GET_P", 5) == 0) {
+        snprintf(txBuffer, sizeof(txBuffer), "P=%dPa\r\n", pression);
+    } else if (strncmp(command, "SET_K=", 6) == 0) {
+        sscanf(command + 6, "%d", &K_value);
+        snprintf(txBuffer, sizeof(txBuffer), "SET_K=OK\r\n");
+    } else if (strncmp(command, "GET_K", 5) == 0) {
+        snprintf(txBuffer, sizeof(txBuffer), "K=%d.%04d\r\n", K_value / 100, K_value % 100);
+    } else if (strncmp(command, "GET_A", 5) == 0) {
+        snprintf(txBuffer, sizeof(txBuffer), "A=%.4f\r\n", angle);
+    } else {
+        snprintf(txBuffer, sizeof(txBuffer), "Unknown Command\r\n");
+    }
+
+    // Envoie la réponse via UART4
+    HAL_UART_Transmit(&huart4, (uint8_t *)txBuffer, strlen(txBuffer), HAL_MAX_DELAY);
+
+    // Relance la réception UART après traitement de la commande
+    HAL_UART_Receive_IT(&huart4, (uint8_t *)rxBuffer, RX_BUFFER_SIZE);
+}
+```
+
+![WhatsApp Image 2024-11-15 at 16 45 18](https://github.com/user-attachments/assets/9eb22027-5172-4de2-b7ee-014134e29fcc)
 
 **python**
 
