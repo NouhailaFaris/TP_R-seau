@@ -468,6 +468,7 @@ curl -X DELETE http://localhost:5000/api/welcome/2
 ### Communication série entre la STM32 et le Raspberry PI zero: implémentation du protocole proposé au TP2.4
 ### API REST sur le Raspberry
 - Mesures de température et de pression sur I²C (STM32)
+on a reuci de faire tourner le moteur a l'aide des valeurs du temperature (cette etape est validé par le prof) 
 ```
 #include "main.h"
 #include "BMP280.h" // Hypothétique fichier d'interface pour le capteur BMP280
@@ -504,6 +505,8 @@ int main(void) {
 
  ```
 -  Communication série entre STM32 et Raspberry Pi Zero:
+
+![WhatsApp Image 2024-11-15 at 16 45 18 (1)](https://github.com/user-attachments/assets/adf8d3fc-2100-4786-b9f6-c0420d7b3c7a)
 
 -  Serveur Python avec API REST sur le Raspberry Pi:
 ```
