@@ -1,0 +1,11 @@
+../Core/Src/BMP280_simple.c:34:6:BMP280_get_trimming	1
+../Core/Src/BMP280_simple.c:56:5:BMP280_check	4
+../Core/Src/BMP280_simple.c:82:5:BMP280_init	2
+../Core/Src/BMP280_simple.c:99:5:BMP280_Write_Reg	4
+../Core/Src/BMP280_simple.c:122:10:BMP280_Read_Reg	3
+../Core/Src/BMP280_simple.c:141:14:bmp280_compensate_T_int32	1
+../Core/Src/BMP280_simple.c:154:14:bmp280_compensate_P_int64	2
+../Core/Src/BMP280_simple.c:176:14:BMP280_get_temperature	1
+../Core/Src/BMP280_simple.c:190:14:BMP280_get_pressure	1
+../Core/Src/BMP280_simple.c:205:6:BMP280_print_temperature	1
+../Core/Src/BMP280_simple.c:214:6:BMP280_print_pressure	1
