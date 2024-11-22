@@ -610,105 +610,26 @@ curl -X DELETE http://localhost:5000/api/welcome/2
 ### Pilotage du moteur:
 ![image](https://github.com/user-attachments/assets/3296caf0-9704-4a29-a0b3-8d420b9e9e24)
 
-###  Interfaçage avec le capteur:
+##  Interfaçage avec le capteur:
 
+### Test et validation :
 
+**Cette étape est validé par le prof** 
 
 # TP 5
 # Objectif: Faire marcher ensemble les TP 1, 2, 3 et 4
 ### Mesures de température et de pression sur I²C par le STM32
+
+![image](https://github.com/user-attachments/assets/2d6e6b36-20b6-44f5-a11b-88a4bfdd816c)
+
 ### Communication série entre la STM32 et le Raspberry PI zero: implémentation du protocole proposé au TP2.4
-### API REST sur le Raspberry
-- Mesures de température et de pression sur I²C (STM32)
-on a reuci de faire tourner le moteur a l'aide des valeurs du temperature (cette etape est validé par le prof) 
-```
-#include "main.h"
-#include "BMP280.h" // Hypothétique fichier d'interface pour le capteur BMP280
-
-// Déclaration des variables pour stocker les valeurs mesurées
-float temperature = 0.0f;
-float pressure = 0.0f;
-
-// Fonction pour initialiser l'I²C et le capteur BMP280
-void I2C_Init(void) {
-    // Initialiser l'I2C (généré par CubeMX)
-    HAL_I2C_Init(&hi2c1);
-    
-    // Initialisation du capteur BMP280
-    BMP280_Init();
-}
-
-// Fonction pour lire les mesures de température et de pression
-void Read_Temperature_and_Pressure(void) {
-    // Lire la température et la pression du capteur BMP280
-    BMP280_ReadTemperatureAndPressure(&temperature, &pressure);
-}
-
-// Fonction principale
-int main(void) {
-    HAL_Init();      // Initialiser la HAL
-    I2C_Init();      // Initialiser I²C et le capteur BMP280
-    
-    while (1) {
-        Read_Temperature_and_Pressure();  // Lire les mesures
-        HAL_Delay(1000); // Attendre 1 seconde
-    }
-}
-
- ```
--  Communication série entre STM32 et Raspberry Pi Zero:
 
 ![WhatsApp Image 2024-11-15 at 16 45 18 (1)](https://github.com/user-attachments/assets/adf8d3fc-2100-4786-b9f6-c0420d7b3c7a)
 
--  Serveur Python avec API REST sur le Raspberry Pi:
-```
-import serial
-from flask import Flask, jsonify
+### API REST sur le Raspberry
 
-# Initialiser la connexion série
-ser = serial.Serial('/dev/ttyAMA0', 115200, timeout=1)  # Remplacez par votre port série
+on a reuci de faire tourner le moteur a l'aide des valeurs du temperature (cette etape est validé par le prof) 
 
-# Variables globales pour stocker les données
-temperature = None
-pressure = None
-K = None
-angle = None
-
-# Fonction pour lire les données série envoyées par la STM32
-def read_serial_data(command):
-    ser.write(command.encode())  # Envoi de la commande
-    response = ser.readline().decode('utf-8').strip()  # Lecture de la réponse
-    return response
-
-# API REST pour obtenir les valeurs de température et de pression
-@app.route('/sensor_data', methods=['GET'])
-def get_sensor_data():
-    global temperature, pressure, K, angle
-    # Récupérer la température
-    temperature_response = read_serial_data("GET_T")
-    temperature = temperature_response.split('=')[1].split('_')[0]
-    
-    # Récupérer la pression
-    pressure_response = read_serial_data("GET_P")
-    pressure = pressure_response.split('=')[1].split('P')[0]
-    
-    # Récupérer le coefficient K
-    K_response = read_serial_data("GET_K")
-    K = K_response.split('=')[1]
-    
-    # Récupérer l'angle
-    angle_response = read_serial_data("GET_A")
-    angle = angle_response.split('=')[1]
-    
-    # Retourner les données sous forme de JSON
-    return jsonify({'temperature': temperature, 'pressure': pressure, 'K': K, 'angle': angle})
-
-# Initialisation du serveur Flask
-app = Flask(__name__)
-
-if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000)
-```
 
 
 
