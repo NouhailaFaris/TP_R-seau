@@ -359,18 +359,37 @@ logout
 ssh nouhfari@192.168.88.228
 ```
 
-**Création du fichier requirement.txt**
+3. Création du fichier requirement.txt
 
 ![image](https://github.com/user-attachments/assets/0e661ee0-9e57-47f6-a517-9a58d3ce1fb1)
 
 
-### Premier fichier Web:
+4. Premier fichier Web:
+   
+**Création d’un fichier hello.py dans le répertoire ~/server**
+```
+nano hello.py
+
+```
+**Contenu de hello.py**
+```
+from flask import Flask
+app = Flask(__name__)
+
+@app.route('/')
+def hello_world():
+    return 'Hello, World!\n'
+
+```
+### Lancement du serveur:
 
 ![image](https://github.com/user-attachments/assets/e88737cb-7fa9-4cff-96d1-d3b345701e84)
 
+### Test du serveur: 
 ![image](https://github.com/user-attachments/assets/608c2056-3cbd-4b61-8d35-c533d10f2a03)
 
-### Première route
+
+1. Première route:
 
 **Rôle du décorateur @app.route**
 
