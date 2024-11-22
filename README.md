@@ -170,15 +170,23 @@ int main(void)
 
 **L'outil Rpi_Imager a été utilisé pour flasher l'image sur la carte SD.**
 
+ ![image](https://github.com/user-attachments/assets/2697a3e5-2ef1-443b-a6ca-087e84e0d57e)
+ 
  ![image](https://github.com/user-attachments/assets/94f776dd-35a3-4498-9f7a-2e10c8755ed6)
 
- ![image](https://github.com/user-attachments/assets/2697a3e5-2ef1-443b-a6ca-087e84e0d57e)
  
 **Premier démarrage**
 
 **Connexion SSH :**
 
+**L’adresse IP du Raspberry a été attribuée dynamiquement par le routeur (DHCP).**
+
 ![image](https://github.com/user-attachments/assets/06dd0bb4-5c9b-4916-a870-c02d4f86b695)
+
+**Branchements:**
+Les broches TX et RX du port UART du Raspberry Pi (GPIO 14 et GPIO 15) ont été reliées entre elles pour simuler une communication en boucle
+
+### Configuration et test avec minicom:
 
 **installation minicom**
 
@@ -194,7 +202,10 @@ sudo apt install minicom
 
 ![image](https://github.com/user-attachments/assets/f2a962d3-000d-4299-931e-9e45f2eff4c5)
 
-### Communication avec la STM32:
+### Implémentation du protocole sur la STM32 :
+
+Le code suivant a été écrit pour gérer les commandes reçues via UART et répondre conformément au protocole défini :
+
 ```
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart) {
 	if (huart->Instance == UART4) {
@@ -232,20 +243,104 @@ void handleCommand(char *command) {
     HAL_UART_Receive_IT(&huart4, (uint8_t *)rxBuffer, RX_BUFFER_SIZE);
 }
 ```
+**Test depuis le Raspberry Pi**
 
 ![WhatsApp Image 2024-11-15 at 16 45 18](https://github.com/user-attachments/assets/9eb22027-5172-4de2-b7ee-014134e29fcc)
 
-**python**
+### Commande depuis Python:
 
 ![image](https://github.com/user-attachments/assets/e9673bb0-6ff2-4119-9b4b-29b261d2049a)
 
+**Script Python : Communication STM32**
+```
+import serial
 
+# Configuration du port série
+STM32_PORT = "/dev/ttyAMA0"  # Modifiez selon votre configuration
+BAUD_RATE = 9600  # Assurez-vous que la vitesse correspond à celle configurée sur la STM32
 
+# Initialisation de la connexion série
+ser = serial.Serial(STM32_PORT, BAUD_RATE, timeout=1)
 
+# Fonction pour envoyer une commande et lire la réponse
+def send_command(command):
+    try:
+        # Envoie de la commande avec un retour à la ligne
+        ser.write((command + '\n').encode())
+        # Lecture de la réponse
+        response = ser.readline().decode().strip()
+        return response
+    except Exception as e:
+        print(f"Erreur lors de l'envoi de la commande {command}: {e}")
+        return None
 
- ## TP 3:
- 
- **Développement d'une interface REST sur le Raspberry**
+# Fonction pour récupérer la température
+def get_temperature():
+    response = send_command("GET_T")
+    if response:
+        print(f"Température reçue : {response}")
+    else:
+        print("Aucune réponse reçue pour GET_T.")
+
+# Fonction pour récupérer la pression
+def get_pressure():
+    response = send_command("GET_P")
+    if response:
+        print(f"Pression reçue : {response}")
+    else:
+        print("Aucune réponse reçue pour GET_P.")
+
+# Fonction pour définir le coefficient K
+def set_coefficient_k(value):
+    command = f"SET_K={value}"
+    response = send_command(command)
+    if response:
+        print(f"Réponse à SET_K : {response}")
+    else:
+        print("Aucune réponse reçue pour SET_K.")
+
+# Fonction pour récupérer le coefficient K
+def get_coefficient_k():
+    response = send_command("GET_K")
+    if response:
+        print(f"Coefficient K reçu : {response}")
+    else:
+        print("Aucune réponse reçue pour GET_K.")
+
+# Fonction pour récupérer l'angle
+def get_angle():
+    response = send_command("GET_A")
+    if response:
+        print(f"Angle reçu : {response}")
+    else:
+        print("Aucune réponse reçue pour GET_A.")
+
+# Fonction principale pour tester le protocole
+def main():
+    print("Test de communication avec la STM32...")
+    
+    # Test des différentes commandes
+    get_temperature()
+    get_pressure()
+    set_coefficient_k(1234)  # Exemple de coefficient K
+    get_coefficient_k()
+    get_angle()
+
+    # Fermeture de la connexion série
+    ser.close()
+
+if __name__ == "__main__":
+    main()
+```
+### Exécution du script :
+```
+python3 stm32_communication.py
+```
+
+### Résultat:
+
+ ## TP 3:Développement d'une interface REST sur le Raspberry
+
  
 ### Installation :
 
@@ -264,18 +359,37 @@ logout
 ssh nouhfari@192.168.88.228
 ```
 
-**fichier requirement.txt**
+3. Création du fichier requirement.txt
 
 ![image](https://github.com/user-attachments/assets/0e661ee0-9e57-47f6-a517-9a58d3ce1fb1)
 
 
-### Premier fichier Web:
+4. Premier fichier Web:
+   
+**Création d’un fichier hello.py dans le répertoire ~/server**
+```
+nano hello.py
+
+```
+**Contenu de hello.py**
+```
+from flask import Flask
+app = Flask(__name__)
+
+@app.route('/')
+def hello_world():
+    return 'Hello, World!\n'
+
+```
+### Lancement du serveur:
 
 ![image](https://github.com/user-attachments/assets/e88737cb-7fa9-4cff-96d1-d3b345701e84)
 
+### Test du serveur: 
 ![image](https://github.com/user-attachments/assets/608c2056-3cbd-4b61-8d35-c533d10f2a03)
 
-### Première route
+
+1. Première route:
 
 **Rôle du décorateur @app.route**
 
