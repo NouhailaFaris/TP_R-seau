@@ -159,6 +159,7 @@ int main(void)
 
 ![image](https://github.com/user-attachments/assets/bf406e71-3157-4ac5-8568-c7c07a1db3f0)
 
+Nous avons réussi à afficher les valeurs compensées de la température, de la pression et de l'accéléromètre
 
  ## TP 2:
  
@@ -234,81 +235,9 @@ void handleCommand(char *command, BMP280_S32_t *comp_temp, BMP280_U32_t *comp_pr
 ![image](https://github.com/user-attachments/assets/e9673bb0-6ff2-4119-9b4b-29b261d2049a)
 
 **Script Python : Communication STM32**
-```
-import serial
-import time
 
-# Initialisation de la connexion série
-def init_serial(port='/dev/ttyAMA0', baudrate=115200):
-    try:
-        ser = serial.Serial(port, baudrate, timeout=1)
-        if ser.is_open:
-            print(f"Connexion série établie sur {port} à {baudrate} bps")
-            return ser
-        else:
-            print("La connexion série n'a pas pu être établie.")
-            return None
-    except serial.SerialException as e:
-        print(f"Erreur lors de la connexion série : {e}")
-        return None
+le script est dans le fichier  stm32_communication.py
 
-# Fonction pour envoyer une commande et lire la réponse
-def send_command(ser, command):
-    if ser and ser.is_open:
-        ser.write((command + '\r\n').encode())  # Envoi de la commande avec un retour à la ligne
-        time.sleep(0.1)  # Pause pour laisser le STM32 répondre
-        try:
-            response = ser.readline()  # Lire la réponse brute
-            print(f"Données brutes reçues : {response}")
-            decoded_response = response.decode().strip()  # Décodage de la réponse
-            if decoded_response:
-                print(f"Envoyé : {command} | Reçu : {decoded_response}")
-            else:
-                print(f"Envoyé : {command} | Aucune réponse reçue.")
-            return decoded_response
-        except UnicodeDecodeError:
-            print(f"Envoyé : {command} | Erreur de décodage. Réponse brute : {response}")
-            return None
-    else:
-        print("Le port série n'est pas ouvert.")
-        return None
-
-# Fonction pour obtenir la température
-def get_temperature(ser):
-    return send_command(ser, "GET_T")
-
-# Fonction pour obtenir la pression
-def get_pressure(ser):
-    return send_command(ser, "GET_P")
-
-# Fonction pour fermer la connexion série
-def close_serial(ser):
-    if ser and ser.is_open:
-        ser.close()
-        print("Connexion série fermée.")
-
-# Exemple d'utilisation
-if __name__ == "__main__":
-    # Modifier le port selon votre configuration
-    serial_port = init_serial(port='/dev/ttyAMA0', baudrate=115200)
-
-    if serial_port:
-        print("La connexion avec la STM32 est prête. Envoi des commandes...")
-        
-        # Lecture de la température
-        print("Lecture de la température...")
-        temperature = get_temperature(serial_port)
-        
-        # Lecture de la pression
-        print("Lecture de la pression...")
-        pressure = get_pressure(serial_port)
-
-        # Fermer la connexion série
-        close_serial(serial_port)
-    else:
-        print("Impossible d'établir une connexion avec la STM32.")
-
-```
 ### Exécution du script :
 ```
 python3 stm32_communication.py
@@ -490,75 +419,8 @@ def page_not_found(error):
 
 #### API CRUD
 
-```
-from flask import Flask, request, jsonify, abort
-
-app = Flask(__name__)
-
-# Stockage de données temporaire (pour tester les opérations CRUD)
-data_store = {}
-
-@app.route('/api/welcome/<int:index>', methods=['GET', 'POST', 'PUT', 'DELETE'])
-def api_welcome_index(index):
-    # Méthode GET - Lire les données
-    if request.method == 'GET':
-        if index in data_store:
-            return jsonify({index: data_store[index]}), 200
-        else:
-            abort(404, description="Resource not found")
-
-    # Méthode POST - Créer une nouvelle entrée
-    elif request.method == 'POST':
-        if index in data_store:
-            return jsonify({"error": "Resource already exists"}), 400
-        else:
-            # Récupérer les données JSON du corps de la requête
-            json_data = request.get_json()
-            if json_data is None:
-                return jsonify({"error": "No data provided"}), 400
-            data_store[index] = json_data
-            return '', 202  # 202 Accepted, sans contenu
-
-    # Méthode PUT - Mettre à jour une entrée existante
-    elif request.method == 'PUT':
-        if index not in data_store:
-            abort(404, description="Resource not found")
-        else:
-            json_data = request.get_json()
-            if json_data is None:
-                return jsonify({"error": "No data provided"}), 400
-            data_store[index] = json_data
-            return jsonify({index: data_store[index]}), 200
-
-    # Méthode DELETE - Supprimer une entrée
-    elif request.method == 'DELETE':
-        if index in data_store:
-            del data_store[index]
-            return '', 204  # 204 No Content, après suppression réussie
-        else:
-            abort(404, description="Resource not found")
-
-# Exemple de réponse pour tester les méthodes et les requêtes
-@app.route('/api/request/', methods=['GET', 'POST'])
-@app.route('/api/request/<path:path>', methods=['GET', 'POST'])
-def api_request(path=None):
-    resp = {
-        "method": request.method,
-        "url": request.url,
-        "path": path,
-        "args": request.args,
-        "headers": dict(request.headers),
-    }
-    if request.method == 'POST':
-        resp["POST"] = {
-            "data": request.get_json(),
-        }
-    return jsonify(resp)
-
-if __name__ == '__main__':
-    app.run(debug=True)
-
-```
+ **Le script est dans le fichier Test_API.py**
+ 
 ![image](https://github.com/user-attachments/assets/aeda9a38-1e90-4837-82d7-43647357b26d)
 
 ![image](https://github.com/user-attachments/assets/5c4a6d79-dd20-4f58-af0f-24c28ba5f4f0)
@@ -599,71 +461,7 @@ le moteur tourne par rapport à la variation de la température.
 
 Code Python:(Flask)
 ```
-from flask import Flask, jsonify
-import serial
-import time
-
-# Configuration de l'interface série
-SERIAL_PORT = '/dev/ttyAMA0'  # Port série (à adapter si nécessaire)
-BAUD_RATE = 115200
-
-# Initialisation de Flask
-app = Flask(__name__)
-
-# Fonction pour initialiser la connexion série
-def init_serial():
-    try:
-        ser = serial.Serial(SERIAL_PORT, BAUD_RATE, timeout=1)
-        if ser.is_open:
-            print(f"Connexion série établie sur {SERIAL_PORT} à {BAUD_RATE} bps")
-            return ser
-        else:
-            print("La connexion série n'a pas pu être établie.")
-            return None
-    except serial.SerialException as e:
-        print(f"Erreur lors de la connexion série : {e}")
-        return None
-
-# Fonction pour envoyer une commande et récupérer la réponse
-def send_command(ser, command):
-    if ser and ser.is_open:
-        ser.write((command + '\r\n').encode())  # Envoi de la commande avec un retour à la ligne
-        time.sleep(0.1)  # Pause pour laisser la STM32 répondre
-        response = ser.readline()  # Lecture de la réponse brute
-        print(f"Données brutes reçues : {response}")
-        try:
-            decoded_response = response.decode().strip()  # Décodage de la réponse
-            return decoded_response
-        except UnicodeDecodeError:
-            print(f"Erreur de décodage : {response}")
-            return None
-    else:
-        print("Le port série n'est pas ouvert.")
-        return None
-
-# Route API pour obtenir la température
-@app.route('/temperature', methods=['GET'])
-def get_temperature():
-    # Initialiser la connexion série
-    ser = init_serial()
-    if ser is None:
-        return jsonify({'error': 'Impossible d\'établir une connexion série'}), 500
-
-    # Envoyer la commande "GET_T" à la STM32
-    temperature = send_command(ser, "GET_T")
-
-    # Fermer la connexion série
-    ser.close()
-
-    # Vérifier si la température a été reçue
-    if temperature:
-        return jsonify({'temperature': temperature}), 200
-    else:
-        return jsonify({'error': 'Impossible de lire la température depuis la STM32'}), 500
-
-# Lancer le serveur Flask
-if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000, debug=True)
+Le code est dans Test.py
 ```
 ![image](https://github.com/user-attachments/assets/dd71d9f3-59bf-4772-bbda-baa05a9ed04b)
 
