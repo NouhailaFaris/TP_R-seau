@@ -630,6 +630,9 @@ le moteur tourne par rapport à la variation de la température.
 
 ![WhatsApp Image 2024-11-15 at 16 45 18 (1)](https://github.com/user-attachments/assets/adf8d3fc-2100-4786-b9f6-c0420d7b3c7a)
 
+![image](https://github.com/user-attachments/assets/d5851b78-1439-42dc-b630-2828c9fd0018)
+
+
 ### API REST sur le Raspberry
 
 on a reuci de faire tourner le moteur a l'aide des valeurs du temperature (cette etape est validé par le prof) 
