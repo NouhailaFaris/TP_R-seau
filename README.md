@@ -340,7 +340,6 @@ python3 stm32_communication.py
 ### Résultat:
 
  ## TP 3: Développement d'une interface REST sur le Raspberry
-<span style="color:blue;">
  
 ### Installation :
 
@@ -399,13 +398,32 @@ Le décorateur @app.route est utilisé dans Flask pour associer une URL à une f
 
 Le fragment <int:index> dans l'URL permet à Flask de capturer un paramètre de type entier dans l'URL et de le passer à la fonction associée.
 
+2. Test avec json.dumps()
+
+```py
+import json
+from flask import Flask, abort
+
+app = Flask(__name__)
+
+welcome = "Welcome to 3ESE API!"
+
+@app.route('/api/welcome/<int:index>')
+def api_welcome_index(index):
+    try:
+        return json.dumps({"index": index, "val": welcome[index]})
+    except IndexError:
+        abort(404)
+```
+
 ![image](https://github.com/user-attachments/assets/f4b414c0-6e15-47b0-83ca-4202d69a1bc6)
 
+### Résultat:
 ![image](https://github.com/user-attachments/assets/ad501736-66cf-45b2-9a8f-d851b8dcc8dd)
 
 On determinant l'index on peut visualiser le caractére qui correspondant dans le tableau welcome  
 
-**1re solution**
+3. 1re solution:
 
 **Definition JSON:**
 
@@ -440,7 +458,7 @@ On peut bien remarquer que le type n'est pas du JSON c'est du html
 
 Ici on a du Json mais c'est nous qui ont forcer ce type avec cette solution
 
-**2éme solution**
+4. 2éme solution
 
 **teste jsonify** 
 
@@ -450,7 +468,9 @@ Ici on a du Json mais c'est nous qui ont forcer ce type avec cette solution
 
 cette solution est meilleure puiqu'on Jsonify le python donc on retrouve que notre python est convertit on json 
 
-### Erreur 404
+5. Erreur 404
+
+### Ajout de la gestion des erreurs 404 dans hello.py:
 
 ```py
 from flask import Flask, jsonify, abort
@@ -478,6 +498,7 @@ def api_welcome_index(index):
 def page_not_found(error):
     return jsonify({"error": "Page not found"}), 404
 ```
+### Test de la gestion des erreurs :
 
 ![image](https://github.com/user-attachments/assets/7e51c079-0691-45fa-8c86-e70f57b1fb7e)
 
