@@ -580,7 +580,7 @@ if __name__ == '__main__':
 
 ```
 
-***Tester les Méthodes avec curl ou RESTED***
+***Teste des Méthodes avec curl ou RESTED***
 GET : Obtenir une ressource
 ```
 curl -X GET http://localhost:5000/api/welcome/1
@@ -599,6 +599,7 @@ curl -X DELETE http://localhost:5000/api/welcome/2
 ```
 
 # Tp4_Bus CAN
+
 ##  Objectif: Développement d'une API Rest et mise en place d'un périphérique sur bus CAN
 
 ### Configuration du bus CAN avec CubeMX:
