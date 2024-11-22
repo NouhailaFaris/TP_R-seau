@@ -616,6 +616,10 @@ curl -X DELETE http://localhost:5000/api/welcome/2
 
 **Cette étape est validé par le prof** 
 
+![image](https://github.com/user-attachments/assets/fb93f9e2-8de0-4058-938c-9c30ec7eeec7)
+
+le moteur tourne par rapport à la variation de la température.
+
 # TP 5
 # Objectif: Faire marcher ensemble les TP 1, 2, 3 et 4
 ### Mesures de température et de pression sur I²C par le STM32
