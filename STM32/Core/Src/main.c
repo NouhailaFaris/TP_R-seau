@@ -35,13 +35,13 @@
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
 #define BMP280_I2C_ADDRESS  0x77 << 1
-#define TEMP_CIBLE 25.0
 #define BMP280_ID_REG       0xD0
 #define BMP280_CTRL_MES_REG 0xF4
 #define BMP280_calib25_REG  0xA1
 #define BMP280_temp_msb_REG 0xFA
 #define BMP280_temp_lsb_REG 0xFB
 #define BMP280_temp_xlsb_REG 0xFC
+#define TEMP_CIBLE 25.0
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -58,14 +58,14 @@ UART_HandleTypeDef huart4;
 UART_HandleTypeDef huart2;
 
 /* USER CODE BEGIN PV */
-int temperature = 25; // Valeur initiale de la température (ex. 25°C)
+/*int temperature = 25; // Valeur initiale de la température (ex. 25°C)
 int pression = 101325; // Valeur initiale de la pression (ex. 101325 Pa)
 float coefficient_k = 1.234;
 float angle = 125.7;
 #define RX_BUFFER_SIZE 7
 char rxBuffer[RX_BUFFER_SIZE];
 char txBuffer[50];
-int K_value = 1234;
+int K_value = 1234;*/
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -81,7 +81,7 @@ static void MX_I2C1_Init(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-BMP280_S32_t comp_temp;
+/*BMP280_S32_t comp_temp;
 BMP280_U32_t comp_press;
 void handleCommand(char *command, BMP280_S32_t comp_temp, BMP280_U32_t comp_press);
 
@@ -152,7 +152,7 @@ uint8_t calculate_angle(float temp) {
 	if (angle < 5) angle = 5;   // Limite à 5°
 	return angle;
 }
-
+*/
 /* USER CODE END 0 */
 
 /**
@@ -189,22 +189,36 @@ int main(void)
 	MX_CAN1_Init();
 	MX_I2C1_Init();
 	/* USER CODE BEGIN 2 */
-	BMP280_S32_t raw_temp, raw_press;
+	/*BMP280_S32_t raw_temp, raw_press;
 		BMP280_S32_t comp_temp;
 		BMP280_U32_t comp_press;
 		printf("======= Démarrage du système =======\r\n");
 		BMP280_check();
-		BMP280_init();HAL_CAN_Start(&hcan1);
+		BMP280_init();
+		HAL_CAN_Start(&hcan1);
 
 		// Activation de la réception UART
-		HAL_UART_Receive_IT(&huart4, (uint8_t *)rxBuffer, RX_BUFFER_SIZE);
+		HAL_UART_Receive_IT(&huart4, (uint8_t *)rxBuffer, RX_BUFFER_SIZE);*/
+	printf("=======demarage Systeme=======\r\n");
+
+	uint8_t reg = BMP280_ID_REG;
+
+	uint8_t bmp280_id = 0;
+
+	HAL_I2C_Master_Transmit(&hi2c1, BMP280_I2C_ADDRESS, &reg, 1, HAL_MAX_DELAY);
+
+	HAL_I2C_Master_Receive(&hi2c1, BMP280_I2C_ADDRESS, &bmp280_id, 1, HAL_MAX_DELAY);
+
+	printf("registre ID: 0x%02X\r\n", bmp280_id);
+
+
 	/* USER CODE END 2 */
 
 	/* Infinite loop */
 	/* USER CODE BEGIN WHILE */
 	while (1)
 	{
-		raw_temp = BMP280_get_temperature();
+		/*raw_temp = BMP280_get_temperature();
 		raw_press = BMP280_get_pressure();
 
 		// Compensation des valeurs
@@ -224,6 +238,7 @@ int main(void)
 
 		// Attendre un peu avant de refaire le calcul
 		HAL_Delay(1000);
+		*/
 		/* USER CODE END WHILE */
 
 		/* USER CODE BEGIN 3 */
