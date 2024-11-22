@@ -254,88 +254,84 @@ void handleCommand(char *command) {
 **Script Python : Communication STM32**
 ```
 import serial
-
-# Configuration du port série
-STM32_PORT = "/dev/ttyAMA0"  # Modifiez selon votre configuration
-BAUD_RATE = 9600  # Assurez-vous que la vitesse correspond à celle configurée sur la STM32
+import time
 
 # Initialisation de la connexion série
-ser = serial.Serial(STM32_PORT, BAUD_RATE, timeout=1)
-
-# Fonction pour envoyer une commande et lire la réponse
-def send_command(command):
+def init_serial(port='/dev/ttyAMA0', baudrate=115200):
     try:
-        # Envoie de la commande avec un retour à la ligne
-        ser.write((command + '\n').encode())
-        # Lecture de la réponse
-        response = ser.readline().decode().strip()
-        return response
-    except Exception as e:
-        print(f"Erreur lors de l'envoi de la commande {command}: {e}")
+        ser = serial.Serial(port, baudrate, timeout=1)
+        if ser.is_open:
+            print(f"Connexion série établie sur {port} à {baudrate} bps")
+            return ser
+        else:
+            print("La connexion série n'a pas pu être établie.")
+            return None
+    except serial.SerialException as e:
+        print(f"Erreur lors de la connexion série : {e}")
         return None
 
-# Fonction pour récupérer la température
-def get_temperature():
-    response = send_command("GET_T")
-    if response:
-        print(f"Température reçue : {response}")
+# Fonction pour envoyer une commande et lire la réponse
+def send_command(ser, command):
+    if ser and ser.is_open:
+        ser.write((command + '\r\n').encode())  # Envoi de la commande avec un retour à la ligne
+        time.sleep(0.1)  # Pause pour laisser le STM32 répondre
+        try:
+            response = ser.readline()  # Lire la réponse brute
+            print(f"Données brutes reçues : {response}")
+            decoded_response = response.decode().strip()  # Décodage de la réponse
+            if decoded_response:
+                print(f"Envoyé : {command} | Reçu : {decoded_response}")
+            else:
+                print(f"Envoyé : {command} | Aucune réponse reçue.")
+            return decoded_response
+        except UnicodeDecodeError:
+            print(f"Envoyé : {command} | Erreur de décodage. Réponse brute : {response}")
+            return None
     else:
-        print("Aucune réponse reçue pour GET_T.")
+        print("Le port série n'est pas ouvert.")
+        return None
 
-# Fonction pour récupérer la pression
-def get_pressure():
-    response = send_command("GET_P")
-    if response:
-        print(f"Pression reçue : {response}")
-    else:
-        print("Aucune réponse reçue pour GET_P.")
+# Fonction pour obtenir la température
+def get_temperature(ser):
+    return send_command(ser, "GET_T")
 
-# Fonction pour définir le coefficient K
-def set_coefficient_k(value):
-    command = f"SET_K={value}"
-    response = send_command(command)
-    if response:
-        print(f"Réponse à SET_K : {response}")
-    else:
-        print("Aucune réponse reçue pour SET_K.")
+# Fonction pour obtenir la pression
+def get_pressure(ser):
+    return send_command(ser, "GET_P")
 
-# Fonction pour récupérer le coefficient K
-def get_coefficient_k():
-    response = send_command("GET_K")
-    if response:
-        print(f"Coefficient K reçu : {response}")
-    else:
-        print("Aucune réponse reçue pour GET_K.")
+# Fonction pour fermer la connexion série
+def close_serial(ser):
+    if ser and ser.is_open:
+        ser.close()
+        print("Connexion série fermée.")
 
-# Fonction pour récupérer l'angle
-def get_angle():
-    response = send_command("GET_A")
-    if response:
-        print(f"Angle reçu : {response}")
-    else:
-        print("Aucune réponse reçue pour GET_A.")
-
-# Fonction principale pour tester le protocole
-def main():
-    print("Test de communication avec la STM32...")
-    
-    # Test des différentes commandes
-    get_temperature()
-    get_pressure()
-    set_coefficient_k(1234)  # Exemple de coefficient K
-    get_coefficient_k()
-    get_angle()
-
-    # Fermeture de la connexion série
-    ser.close()
-
+# Exemple d'utilisation
 if __name__ == "__main__":
-    main()
+    # Modifier le port selon votre configuration
+    serial_port = init_serial(port='/dev/ttyAMA0', baudrate=115200)
+
+    if serial_port:
+        print("La connexion avec la STM32 est prête. Envoi des commandes...")
+        
+        # Lecture de la température
+        print("Lecture de la température...")
+        temperature = get_temperature(serial_port)
+        
+        # Lecture de la pression
+        print("Lecture de la pression...")
+        pressure = get_pressure(serial_port)
+
+        # Fermer la connexion série
+        close_serial(serial_port)
+    else:
+        print("Impossible d'établir une connexion avec la STM32.")
+
 ```
 ### Exécution du script :
 ```
 python3 stm32_communication.py
 ```
+![image](https://github.com/user-attachments/assets/22a18b4a-ed37-4c0c-b799-c39519beeb05)
 
 ### Résultat:
 
