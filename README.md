@@ -19,7 +19,8 @@
 
 ### Capteur BMP280 :
 
-1. les adresses I²C possibles pour ce composant:
+1. les adresses I²C possibles pour ce composant: 0x76 : lorsque SDO est connecté à la masse (GND).
+0x77 : lorsque SDO est connecté à la tension d'alimentation (VDDIO).
 
 2. le registre et la valeur permettant d'identifier ce composant: l'adresse 0xD0 , la valeur est 0x58.
 
@@ -51,48 +52,43 @@
 
 
 ```c
-
- /* USER CODE BEGIN PD */ 
-
+// Définition de l'adresse I2C du BMP280, en décalant de 1 bit à gauche pour correspondre au format standard I2C (écriture sur 7 bits).
 #define BMP280_I2C_ADDRESS 0x77 << 1 
 
+// Définition de l'adresse du registre pour identifier le composant BMP280.
 #define BMP280_ID_REG 0xD0 
 
-/* USER CODE END PD */ 
-
- 
-
+// Fonction principale du programme.
 int main(void) 
-
 { 
+    // Affichage d'un message de démarrage.
+    printf("=======demarage Systeme=======\r\n"); 
 
- 
+    // Initialisation de la variable pour contenir l'adresse du registre (identification).
+    uint8_t reg = BMP280_ID_REG; 
 
-/* USER CODE BEGIN 2 */ 
+    // Variable pour stocker l'ID du composant BMP280.
+    uint8_t bmp280_id = 0; 
 
-printf("=======demarage Systeme=======\r\n"); 
+    // Envoi de l'adresse du registre BMP280_ID_REG (0xD0) via l'I2C pour interroger l'ID du composant.
+    HAL_I2C_Master_Transmit(&hi2c1, BMP280_I2C_ADDRESS, &reg, 1, HAL_MAX_DELAY); //envoyer l'adresse du registre ID
 
-uint8_t reg = BMP280_ID_REG; 
+    // Réception de 1 octet contenant l'ID du BMP280 depuis le composant via I2C.
+    HAL_I2C_Master_Receive(&hi2c1, BMP280_I2C_ADDRESS, &bmp280_id, 1, HAL_MAX_DELAY); //recevoir 1 octet correspondant au contenu du registre
 
-uint8_t bmp280_id = 0; 
+    // Affichage de l'ID reçu en hexadécimal.
+    printf("Id: 0x%x...", buf[0]);
 
-HAL_I2C_Master_Transmit(&hi2c1, BMP280_I2C_ADDRESS, &reg, 1, HAL_MAX_DELAY); //envoyer l'adresse du registre ID
-
-HAL_I2C_Master_Receive(&hi2c1, BMP280_I2C_ADDRESS, &bmp280_id, 1, HAL_MAX_DELAY); //recevoir 1 octet correspondant au contenu du registre
-
-printf("Id: 0x%x...", buf[0]);
-	if (buf[0] == BMP280_ID_VAL) {
-		printf("Ok\r\n");
-		return 0;
-	} else {
-		printf("not Ok!\r\n");
-		return 1;
-	}
-
- 
-
-/* USER CODE END 2 */ 
-
+    // Vérification si l'ID reçu correspond à la valeur attendue pour le BMP280 (doit être 0x58).
+    if (buf[0] == BMP280_ID_VAL) {
+        // Si l'ID est correct, afficher "Ok" et terminer le programme avec succès.
+        printf("Ok\r\n");
+        return 0;
+    } else {
+        // Si l'ID est incorrect, afficher "not Ok!" et terminer le programme avec une erreur.
+        printf("not Ok!\r\n");
+        return 1;
+    }
 }
 
 ```
@@ -106,45 +102,54 @@ printf("Id: 0x%x...", buf[0]);
 
 ```c
 
-/* USER CODE BEGIN PD */ 
-
+// Définition de l'adresse du registre de contrôle pour les mesures.
 #define BMP280_CTRL_MES_REG 0xF4 
 
-/* USER CODE END PD */ 
-
- 
-
 int main(void) 
-
 { 
 
-/* USER CODE BEGIN 2 */ 
+    // Affichage d'un message de démarrage.
+    printf("======= Démarrage Système =======\r\n"); 
 
-printf("=======demarage Systeme=======\r\n"); 
+    // Variable pour contenir l'adresse du registre de contrôle.
+    uint8_t reg1 = BMP280_CTRL_MES_REG; 
 
-uint8_t reg1 = BMP280_CTRL_MES_REG; 
+    // Buffer pour l'envoi des données via I2C.
+    uint8_t buf[2]; 
 
-uint8_t buf[2]; 
+    // Préparation des données à écrire :
+    // - buf[0] contiendra l'adresse du registre de contrôle.
+    // - buf[1] contiendra la valeur à écrire dans ce registre.
+    buf[0] = reg1;  // Adresse du registre
+    buf[1] = 0x57;  // Valeur à écrire (configurations d'oversampling et mode normal).
 
-buf[1]=reg1; 
+    // Envoi de l'adresse et de la valeur au BMP280 pour configurer le registre 0xF4.
+    HAL_I2C_Master_Transmit(&hi2c1, BMP280_I2C_ADDRESS, buf, 2, HAL_MAX_DELAY); 
 
-buf[2]=0x57; 
+    // Réenvoi de l'adresse du registre pour lire sa valeur actuelle.
+    HAL_I2C_Master_Transmit(&hi2c1, BMP280_I2C_ADDRESS, &reg1, 1, HAL_MAX_DELAY); 
 
-HAL_I2C_Master_Transmit(&hi2c1, BMP280_I2C_ADDRESS, buf, 2, HAL_MAX_DELAY); 
+    // Variable pour stocker la valeur lue du registre.
+    uint8_t bmp280_ctrl; 
 
-HAL_I2C_Master_Transmit(&hi2c1, BMP280_I2C_ADDRESS, &reg1, 1, HAL_MAX_DELAY); 
+    // Lecture de la valeur actuelle du registre 0xF4.
+    HAL_I2C_Master_Receive(&hi2c1, BMP280_I2C_ADDRESS, &bmp280_ctrl, 1, HAL_MAX_DELAY); 
 
-HAL_I2C_Master_Receive(&hi2c1, BMP280_I2C_ADDRESS, &bmp280_ctrl, 1, HAL_MAX_DELAY); 
+    // Affichage de la valeur lue en hexadécimal.
+    printf("Valeur du registre de contrôle (0xF4) : 0x%02X\r\n", bmp280_ctrl); 
+}
 
-printf("Valeur du registre de contrôle (0xF4) : 0x%02X\r\n", bmp280_ctrl);
 
 ```
+**Vérification du configuration**
 
  ![image](https://github.com/user-attachments/assets/f8de9a36-e626-463b-8ec6-9aaa9afbc1b2)"
 
 ### Récupération de l'étalonnage, de la température et de la pression
 
  ![image](https://github.com/user-attachments/assets/136f1959-bfd9-4d44-8567-f35044e979a9)
+
+ ### Calcul des températures et des pression compensées
  
 **Interfaçage de l'accléromètre**
 
