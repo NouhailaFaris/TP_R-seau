@@ -22,9 +22,9 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include <stdio.h>
+#include <string.h>
 #include <BMP280_simple.h>
 #include <stdlib.h>
-
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -35,17 +35,13 @@
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
 #define BMP280_I2C_ADDRESS  0x77 << 1
-#define TEMP_CIBLE 25.0
 #define BMP280_ID_REG       0xD0
-#define BMP280_CTRL_MES_REG       0xF4
-#define BMP280_calib25_REG       0xA1
-#define BMP280_temp_msb_REG      0xFA
-#define BMP280_temp_lsb_REG      0xFB
-#define BMP280_temp_xlsb_REG     0xFC
-// Données pour le contrôle du moteur
-uint8_t dataCW[2] = {0x00, 0x5A};  // Commande 90° sens horaire
-uint8_t dataCCW[2] = {0x01, 0x5A}; // Commande 90° sens anti-horaire
-uint8_t accelData[6];
+#define BMP280_CTRL_MES_REG 0xF4
+#define BMP280_calib25_REG  0xA1
+#define BMP280_temp_msb_REG 0xFA
+#define BMP280_temp_lsb_REG 0xFB
+#define BMP280_temp_xlsb_REG 0xFC
+#define TEMP_CIBLE 25.0
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -62,12 +58,14 @@ UART_HandleTypeDef huart4;
 UART_HandleTypeDef huart2;
 
 /* USER CODE BEGIN PV */
+int temperature = 25; // Valeur initiale de la température (ex. 25°C)
+int pression = 101325; // Valeur initiale de la pression (ex. 101325 Pa)
 float coefficient_k = 1.234;
 float angle = 125.7;
-uint8_t rx_buffer[20];
-uint8_t tx_buffer[50];
-
-
+#define RX_BUFFER_SIZE 7
+char rxBuffer[RX_BUFFER_SIZE];
+char txBuffer[50];
+int K_value = 1234;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -83,36 +81,77 @@ static void MX_I2C1_Init(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
+/*BMP280_S32_t comp_temp;
+BMP280_U32_t comp_press;
+void handleCommand(char *command, BMP280_S32_t comp_temp, BMP280_U32_t comp_press);
 
+void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart) {
+    if (huart->Instance == UART4) {
+        printf("Commande reçue : %s\r\n", rxBuffer);
+        handleCommand(rxBuffer, comp_temp, comp_press);  // Passez les variables en paramètre
+        memset(rxBuffer, 0, RX_BUFFER_SIZE);
+        HAL_UART_Receive_IT(&huart4, (uint8_t *)rxBuffer, RX_BUFFER_SIZE);
+    }
+}
 
-void rotate_motor_90_degrees(void) {
-	static uint8_t direction = 0; // 0 = horaire, 1 = antihoraire
+void handleCommand(char *command, BMP280_S32_t comp_temp, BMP280_U32_t comp_press) {
+    if (strncmp(command, "GET_T", 5) == 0) {
+        // Renvoie la température compensée actuelle
+        float temperature_value = comp_temp / 100.0; // Conversion en °C
+        snprintf(txBuffer, sizeof(txBuffer), "T=+%.d\r\n", temperature_value);
+        printf("Sending: %s", txBuffer);  // Affiche ce qui est envoyé
+    } else if (strncmp(command, "GET_P", 5) == 0) {
+        // Renvoie la pression actuelle
+        snprintf(txBuffer, sizeof(txBuffer), "P=%ldPa\r\n", comp_press);  // Format corrigé
+        printf("Sending: %s", txBuffer);  // Affiche ce qui est envoyé
+    } else if (strncmp(command, "SET_K=", 6) == 0) {
+        sscanf(command + 6, "%d", &K_value);
+        snprintf(txBuffer, sizeof(txBuffer), "SET_K=OK\r\n");
+    } else if (strncmp(command, "GET_K", 5) == 0) {
+        snprintf(txBuffer, sizeof(txBuffer), "K=%d.%04d\r\n", K_value / 100, K_value % 100);
+    } else if (strncmp(command, "GET_A", 5) == 0) {
+        snprintf(txBuffer, sizeof(txBuffer), "A=%.4f\r\n", angle);
+    } else {
+        snprintf(txBuffer, sizeof(txBuffer), "Unknown Command\r\n");
+    }
+
+    // Envoie de la réponse via UART4
+    HAL_UART_Transmit(&huart4, (uint8_t *)txBuffer, strlen(txBuffer), HAL_MAX_DELAY);
+    // Relance la réception UART après traitement de la commande
+    HAL_UART_Receive_IT(&huart4, (uint8_t *)rxBuffer, RX_BUFFER_SIZE);
+}
+*/
+// Fonction pour ajuster l'angle du moteur
+void rotate_motor_dynamic(uint8_t angle, uint8_t direction) {
 	CAN_TxHeaderTypeDef pHeader;
 	uint8_t data[2];
 	uint32_t pTxMailbox;
 
-	// Configure CAN header for angle control
+	// Configurer l'en-tête CAN
 	pHeader.StdId = 0x61;
 	pHeader.IDE = CAN_ID_STD;
 	pHeader.RTR = CAN_RTR_DATA;
-	pHeader.DLC = 2;  // Set to 2 because only 2 bytes are used
+	pHeader.DLC = 2;
 
-	// Configure data
-	data[0] = 90;  // 90° rotation
-	data[1] = direction;  // Direction: 0 for clockwise, 1 for counterclockwise
+	// Configurer les données
+	data[0] = angle;     // Angle dynamique
+	data[1] = direction; // Direction
 
-	// Send CAN message
+	// Envoi du message CAN
 	if (HAL_CAN_AddTxMessage(&hcan1, &pHeader, data, &pTxMailbox) != HAL_OK) {
 		Error_Handler();
+	} else {
+		printf("Message CAN envoyé : angle=%d, direction=%d\r\n", angle, direction);
 	}
-
-	// Toggle direction for next call
-	direction = !direction;
-
-	// Small delay
-	HAL_Delay(1000);
 }
 
+// Fonction pour calculer l'angle basé sur la température
+uint8_t calculate_angle(float temp) {
+	uint8_t angle = 5 + (temp - TEMP_CIBLE) * 5; // Augmente l'angle en fonction de la température
+	if (angle > 90) angle = 90; // Limite à 90°
+	if (angle < 5) angle = 5;   // Limite à 5°
+	return angle;
+}
 
 /* USER CODE END 0 */
 
@@ -134,7 +173,6 @@ int main(void)
 
 	/* USER CODE BEGIN Init */
 
-
 	/* USER CODE END Init */
 
 	/* Configure the system clock */
@@ -154,46 +192,44 @@ int main(void)
 	BMP280_S32_t raw_temp, raw_press;
 	BMP280_S32_t comp_temp;
 	BMP280_U32_t comp_press;
-	printf("=======demarage Systeme=======\r\n");
+	printf("======= Démarrage du système =======\r\n");
 	BMP280_check();
 	BMP280_init();
-	//uint8_t reg1 =BMP280_CTRL_MES_REG;
-	//uint8_t reg1 =BMP280_calib25_REG;
-	//uint8_t reg2[] = {BMP280_temp_msb_REG,BMP280_temp_lsb_REG,BMP280_temp_xlsb_REG};
-	//uint8_t temp_data[3];  // Tableau pour stocker les 3 octets de température
-	//uint32_t temp_raw = 0;
-	//uint8_t bmp280_ctrl;
-	//uint8_t buf[10];
-	//buf[1]=reg1;
-	//buf[2]=0x57;
-	//HAL_I2C_Master_Transmit(&hi2c1, BMP280_I2C_ADDRESS, buf, 2, HAL_MAX_DELAY);
-	//HAL_I2C_Master_Transmit(&hi2c1, BMP280_I2C_ADDRESS, &reg1, 1, HAL_MAX_DELAY);
-	//HAL_I2C_Master_Receive(&hi2c1, BMP280_I2C_ADDRESS, &bmp280_ctrl, 1, HAL_MAX_DELAY);
-	//Buffer de réception et transmission
-	//printf("Valeur du registre de controle (0xF4) : 0x%02X\r\n", bmp280_ctrl);
+	HAL_CAN_Start(&hcan1);
+
+	// Activation de la réception UART
+	HAL_UART_Receive_IT(&huart4, (uint8_t *)rxBuffer, RX_BUFFER_SIZE);
+
 	/* USER CODE END 2 */
 
 	/* Infinite loop */
 	/* USER CODE BEGIN WHILE */
-	HAL_CAN_Start(&hcan1);
 	while (1)
 	{
 		raw_temp = BMP280_get_temperature();
 		raw_press = BMP280_get_pressure();
+
 		// Compensation des valeurs
 		comp_temp = bmp280_compensate_T_int32(raw_temp);
 		comp_press = bmp280_compensate_P_int64(raw_press);
+
+		/*// Affichage des données sur Minicom
 		printf("------------------------------------------------\r\n");
 		printf("Température compensée : %ld.%02ld°C\r\n", comp_temp / 100, abs(comp_temp % 100));
-		printf("Pression compensée : %ld.%02ld hPa\r\n", comp_press / 25600, (comp_press / 256) % 100);
-		rotate_motor_90_degrees();
-		HAL_Delay(500);
+		printf("Pression compensée : %ld.%02ld hPa\r\n", comp_press / 25600, (comp_press / 256) % 100);*/
 
+		// Calcul de l'angle en fonction de la température
+		uint8_t angle = calculate_angle(comp_temp / 100.0);
+
+		// Faire tourner le moteur avec l'angle calculé
+		rotate_motor_dynamic(angle, 0); // 0 pour sens horaire
+
+		// Attendre un peu avant de refaire le calcul
+		HAL_Delay(1000);
 
 		/* USER CODE END WHILE */
 
 		/* USER CODE BEGIN 3 */
-
 	}
 	/* USER CODE END 3 */
 }
@@ -431,7 +467,8 @@ void Error_Handler(void)
 {
 	/* USER CODE BEGIN Error_Handler_Debug */
 	/* User can add his own implementation to report the HAL error return state */
-	printf("Initialisation du MPU-9250 réussie.\r\n");
+	__disable_irq();
+	while (1)
 	{
 	}
 	/* USER CODE END Error_Handler_Debug */
