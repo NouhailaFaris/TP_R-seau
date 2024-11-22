@@ -42,6 +42,11 @@
 #define BMP280_temp_lsb_REG 0xFB
 #define BMP280_temp_xlsb_REG 0xFC
 #define TEMP_CIBLE 25.0
+#define MPU9250_ADDR           0x68  // Adresse I2C par défaut du MPU-9250
+#define MPU9250_ACCEL_XOUT_H   0x3B // Registre de début des données d'accélération
+#define MPU9250_PWR_MGMT_1     0x6B // Registre de gestion de l'alimentation
+#define MPU9250_ACCEL_SCALE    16384.0 // Échelle pour ±2g
+
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -153,6 +158,30 @@ uint8_t calculate_angle(float temp) {
 	return angle;
 }
  */
+
+void MPU9250_Init(void) {
+    uint8_t data = 0x00; // Sortie de mode veille
+    HAL_I2C_Mem_Write(&hi2c1, MPU9250_ADDR << 1, MPU9250_PWR_MGMT_1, 1, &data, 1, HAL_MAX_DELAY);
+    HAL_Delay(100); // Attente pour la stabilisation
+}
+void MPU9250_Read_Accel(float *accelX, float *accelY, float *accelZ) {
+    uint8_t accelData[6];
+    int16_t rawAccelX, rawAccelY, rawAccelZ;
+
+    // Lecture des 6 octets de données d'accélération
+    HAL_I2C_Mem_Read(&hi2c1, MPU9250_ADDR << 1, MPU9250_ACCEL_XOUT_H, 1, accelData, 6, HAL_MAX_DELAY);
+
+    // Conversion des données brutes en valeurs signées
+    rawAccelX = (int16_t)(accelData[0] << 8 | accelData[1]);
+    rawAccelY = (int16_t)(accelData[2] << 8 | accelData[3]);
+    rawAccelZ = (int16_t)(accelData[4] << 8 | accelData[5]);
+
+    // Conversion en "g" (accélération gravitationnelle)
+    *accelX = rawAccelX / MPU9250_ACCEL_SCALE;
+    *accelY = rawAccelY / MPU9250_ACCEL_SCALE;
+    *accelZ = rawAccelZ / MPU9250_ACCEL_SCALE;
+}
+
 /* USER CODE END 0 */
 
 /**
@@ -199,6 +228,8 @@ int main(void)
 
 	// Activation de la réception UART
 	HAL_UART_Receive_IT(&huart4, (uint8_t *)rxBuffer, RX_BUFFER_SIZE);
+	MPU9250_Init();
+	printf("MPU-9250 Initialized.\r\n");
 
 	/* USER CODE END 2 */
 
@@ -223,6 +254,13 @@ int main(void)
 
 		// Faire tourner le moteur avec l'angle calculé
 		rotate_motor_dynamic(angle, 0); // 0 pour sens horaire*/
+		float accelX, accelY, accelZ;
+
+		// Lire les valeurs d'accélération
+		MPU9250_Read_Accel(&accelX, &accelY, &accelZ);
+
+		// Afficher les valeurs sur UART
+		printf("Accélération (g) : X=%.2f, Y=%.2f, Z=%.2f\r\n", accelX, accelY, accelZ);
 
 		// Attendre un peu avant de refaire le calcul
 		HAL_Delay(1000);

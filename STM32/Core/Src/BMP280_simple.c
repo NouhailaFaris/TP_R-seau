@@ -32,24 +32,24 @@ int16_t dig_P9;
 BMP280_S32_t t_fine;
 
 void BMP280_get_trimming() {
-    uint8_t calib_data[24];
-    HAL_I2C_Mem_Read(&hi2c1, BMP280_ADDR, 0x88, 1, calib_data, 24, HAL_MAX_DELAY);
+	uint8_t calib_data[24];
+	HAL_I2C_Mem_Read(&hi2c1, BMP280_ADDR, 0x88, 1, calib_data, 24, HAL_MAX_DELAY);
 
-    dig_T1 = (calib_data[1] << 8) | calib_data[0];
-    dig_T2 = (calib_data[3] << 8) | calib_data[2];
-    dig_T3 = (calib_data[5] << 8) | calib_data[4];
+	dig_T1 = (calib_data[1] << 8) | calib_data[0];
+	dig_T2 = (calib_data[3] << 8) | calib_data[2];
+	dig_T3 = (calib_data[5] << 8) | calib_data[4];
 
-    dig_P1 = (calib_data[7] << 8) | calib_data[6];
-    dig_P2 = (calib_data[9] << 8) | calib_data[8];
-    dig_P3 = (calib_data[11] << 8) | calib_data[10];
-    dig_P4 = (calib_data[13] << 8) | calib_data[12];
-    dig_P5 = (calib_data[15] << 8) | calib_data[14];
-    dig_P6 = (calib_data[17] << 8) | calib_data[16];
-    dig_P7 = (calib_data[19] << 8) | calib_data[18];
-    dig_P8 = (calib_data[21] << 8) | calib_data[20];
-    dig_P9 = (calib_data[23] << 8) | calib_data[22];
+	dig_P1 = (calib_data[7] << 8) | calib_data[6];
+	dig_P2 = (calib_data[9] << 8) | calib_data[8];
+	dig_P3 = (calib_data[11] << 8) | calib_data[10];
+	dig_P4 = (calib_data[13] << 8) | calib_data[12];
+	dig_P5 = (calib_data[15] << 8) | calib_data[14];
+	dig_P6 = (calib_data[17] << 8) | calib_data[16];
+	dig_P7 = (calib_data[19] << 8) | calib_data[18];
+	dig_P8 = (calib_data[21] << 8) | calib_data[20];
+	dig_P9 = (calib_data[23] << 8) | calib_data[22];
 
-    printf("Calibration parameters read successfully.\n");
+	printf("Calibration parameters read successfully.\n");
 }
 
 
@@ -140,82 +140,82 @@ uint8_t* BMP280_Read_Reg(uint8_t reg, uint8_t length) {
 BMP280_S32_t t_fine;
 BMP280_S32_t bmp280_compensate_T_int32(BMP280_S32_t adc_T)
 {
-    BMP280_S32_t var1, var2, T;
-    var1 = ((((adc_T >> 3) - ((BMP280_S32_t)dig_T1 << 1))) * ((BMP280_S32_t)dig_T2)) >> 11;
-    var2 = (((((adc_T >> 4) - ((BMP280_S32_t)dig_T1)) * ((adc_T >> 4) - ((BMP280_S32_t)dig_T1))) >> 12) *
-            ((BMP280_S32_t)dig_T3)) >> 14;
-    t_fine = var1 + var2;
-    T = (t_fine * 5 + 128) >> 8;
-    return T;
+	BMP280_S32_t var1, var2, T;
+	var1 = ((((adc_T >> 3) - ((BMP280_S32_t)dig_T1 << 1))) * ((BMP280_S32_t)dig_T2)) >> 11;
+	var2 = (((((adc_T >> 4) - ((BMP280_S32_t)dig_T1)) * ((adc_T >> 4) - ((BMP280_S32_t)dig_T1))) >> 12) *
+			((BMP280_S32_t)dig_T3)) >> 14;
+	t_fine = var1 + var2;
+	T = (t_fine * 5 + 128) >> 8;
+	return T;
 }
 
 // Returns pressure in Pa as unsigned 32 bit integer in Q24.8 format (24 integer bits and 8 fractional bits).
 // Output value of “24674867” represents 24674867/256 = 96386.2 Pa = 963.862 hPa
 BMP280_U32_t bmp280_compensate_P_int64(BMP280_S32_t adc_P)
 {
-    BMP280_S64_t var1, var2, p;
-    var1 = ((BMP280_S64_t)t_fine) - 128000;
-    var2 = var1 * var1 * (BMP280_S64_t)dig_P6;
-    var2 = var2 + ((var1 * (BMP280_S64_t)dig_P5) << 17);
-    var2 = var2 + (((BMP280_S64_t)dig_P4) << 35);
-    var1 = ((var1 * var1 * (BMP280_S64_t)dig_P3) >> 8) + ((var1 * (BMP280_S64_t)dig_P2) << 12);
-    var1 = (((((BMP280_S64_t)1) << 47) + var1)) * ((BMP280_S64_t)dig_P1) >> 33;
+	BMP280_S64_t var1, var2, p;
+	var1 = ((BMP280_S64_t)t_fine) - 128000;
+	var2 = var1 * var1 * (BMP280_S64_t)dig_P6;
+	var2 = var2 + ((var1 * (BMP280_S64_t)dig_P5) << 17);
+	var2 = var2 + (((BMP280_S64_t)dig_P4) << 35);
+	var1 = ((var1 * var1 * (BMP280_S64_t)dig_P3) >> 8) + ((var1 * (BMP280_S64_t)dig_P2) << 12);
+	var1 = (((((BMP280_S64_t)1) << 47) + var1)) * ((BMP280_S64_t)dig_P1) >> 33;
 
-    if (var1 == 0)
-    {
-        return 0; // avoid exception caused by division by zero
-    }
+	if (var1 == 0)
+	{
+		return 0; // avoid exception caused by division by zero
+	}
 
-    p = 1048576 - adc_P;
-    p = (((p << 31) - var2) * 3125) / var1;
-    var1 = (((BMP280_S64_t)dig_P9) * (p >> 13) * (p >> 13)) >> 25;
-    var2 = (((BMP280_S64_t)dig_P8) * p) >> 19;
-    p = (((p + var1 + var2) >> 8) + (((BMP280_S64_t)dig_P7) << 4));
-    return (BMP280_U32_t)p;
+	p = 1048576 - adc_P;
+	p = (((p << 31) - var2) * 3125) / var1;
+	var1 = (((BMP280_S64_t)dig_P9) * (p >> 13) * (p >> 13)) >> 25;
+	var2 = (((BMP280_S64_t)dig_P8) * p) >> 19;
+	p = (((p + var1 + var2) >> 8) + (((BMP280_S64_t)dig_P7) << 4));
+	return (BMP280_U32_t)p;
 }
 BMP280_S32_t BMP280_get_temperature() {
-    uint8_t *buf;
-    BMP280_S32_t adc_T;
+	uint8_t *buf;
+	BMP280_S32_t adc_T;
 
-    buf = BMP280_Read_Reg(BMP280_TEMP_REG_MSB, BMP280_TEMP_LEN);
+	buf = BMP280_Read_Reg(BMP280_TEMP_REG_MSB, BMP280_TEMP_LEN);
 
-    adc_T = ((BMP280_S32_t)(buf[0]) << 12) | ((BMP280_S32_t)(buf[1]) << 4)
-            | ((BMP280_S32_t)(buf[2]) >> 4);
+	adc_T = ((BMP280_S32_t)(buf[0]) << 12) | ((BMP280_S32_t)(buf[1]) << 4)
+            		| ((BMP280_S32_t)(buf[2]) >> 4);
 
-    free(buf);
+	free(buf);
 
-    return adc_T;
+	return adc_T;
 }
 
 BMP280_S32_t BMP280_get_pressure() {
-    uint8_t *buf;
-    BMP280_S32_t adc_P;
+	uint8_t *buf;
+	BMP280_S32_t adc_P;
 
-    buf = BMP280_Read_Reg(BMP280_PRES_REG_MSB, BMP280_PRES_LEN);
+	buf = BMP280_Read_Reg(BMP280_PRES_REG_MSB, BMP280_PRES_LEN);
 
-    adc_P = ((BMP280_S32_t)(buf[0]) << 12) | ((BMP280_S32_t)(buf[1]) << 4)
-            | ((BMP280_S32_t)(buf[2]) >> 4);
+	adc_P = ((BMP280_S32_t)(buf[0]) << 12) | ((BMP280_S32_t)(buf[1]) << 4)
+            		| ((BMP280_S32_t)(buf[2]) >> 4);
 
-    free(buf);
+	free(buf);
 
-    return adc_P;
+	return adc_P;
 }
 
 
 void BMP280_print_temperature() {
-    BMP280_S32_t adc_T = BMP280_get_temperature();
-    BMP280_S32_t temp = bmp280_compensate_T_int32(adc_T);
+	BMP280_S32_t adc_T = BMP280_get_temperature();
+	BMP280_S32_t temp = bmp280_compensate_T_int32(adc_T);
 
-    // La température est renvoyée en centièmes de degrés Celsius
-    float temperature = temp / 100.0;
-    printf("Temperature compense : %.2f °C\r\n", temperature);
+	// La température est renvoyée en centièmes de degrés Celsius
+	float temperature = temp / 100.0;
+	printf("Temperature compense : %.2f °C\r\n", temperature);
 }
 
 void BMP280_print_pressure() {
-    BMP280_S32_t adc_P = BMP280_get_pressure();
-    BMP280_U32_t pressure = bmp280_compensate_P_int64(adc_P);
+	BMP280_S32_t adc_P = BMP280_get_pressure();
+	BMP280_U32_t pressure = bmp280_compensate_P_int64(adc_P);
 
-    // La pression est renvoyée en Pascal (Pa)
-    float pressure_hPa = pressure / 256.0; // Conversion en hPa
-    printf("Pression compense : %.2f hPa\r\n", pressure_hPa);
+	// La pression est renvoyée en Pascal (Pa)
+	float pressure_hPa = pressure / 256.0; // Conversion en hPa
+	printf("Pression compense : %.2f hPa\r\n", pressure_hPa);
 }
