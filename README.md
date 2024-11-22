@@ -149,9 +149,13 @@ int main(void)
 
  ![image](https://github.com/user-attachments/assets/136f1959-bfd9-4d44-8567-f35044e979a9)
 
- ### Calcul des températures et des pression compensées
+ ### Calcul des températures et des pression compensées et Interfaçage de l'accléromètre:
  
-**Interfaçage de l'accléromètre**
+ **D'aprés  la datasheet du STM32 on a :**
+ 
+![WhatsApp Image 2024-11-22 at 11 54 22](https://github.com/user-attachments/assets/90361d23-e054-48c7-8fe7-8b8109d131e3)
+
+**Résultat Final:**
 
 ![image](https://github.com/user-attachments/assets/bf406e71-3157-4ac5-8568-c7c07a1db3f0)
 
@@ -163,6 +167,8 @@ int main(void)
  ![image](https://github.com/user-attachments/assets/1a1c718c-3c32-4f5a-9683-fcb8866964af)
 
 **Préparation du Raspberry**
+
+**L'outil Rpi_Imager a été utilisé pour flasher l'image sur la carte SD.**
 
  ![image](https://github.com/user-attachments/assets/94f776dd-35a3-4498-9f7a-2e10c8755ed6)
 
