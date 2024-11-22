@@ -682,6 +682,9 @@ if __name__ == '__main__':
 ```
 ![image](https://github.com/user-attachments/assets/dd71d9f3-59bf-4772-bbda-baa05a9ed04b)
 
+### Test sur Web
+
+![image](https://github.com/user-attachments/assets/5373c01d-8c5f-4577-be8a-75c4b8e56362)
 
 
 
