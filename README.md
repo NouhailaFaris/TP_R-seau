@@ -236,7 +236,7 @@ void handleCommand(char *command, BMP280_S32_t *comp_temp, BMP280_U32_t *comp_pr
 
 **Script Python : Communication STM32**
 
-le script est dans le fichier  stm32_communication.py
+```le script est dans le fichier  stm32_communication.py```
 
 ### Exécution du script :
 ```
@@ -449,6 +449,9 @@ le moteur tourne par rapport à la variation de la température.
 
 # TP 5
 # Objectif: Faire marcher ensemble les TP 1, 2, 3 et 4
+
+![WhatsApp Image 2024-11-22 at 18 18 49 (2)](https://github.com/user-attachments/assets/ccc37bad-d083-4b55-9e9b-e59c94e8d184)
+
 ### Mesures de température et de pression sur I²C par le STM32
 
  ![image](https://github.com/user-attachments/assets/136f1959-bfd9-4d44-8567-f35044e979a9)
