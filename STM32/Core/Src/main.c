@@ -200,16 +200,22 @@ int main(void)
 		// Activation de la réception UART
 		HAL_UART_Receive_IT(&huart4, (uint8_t *)rxBuffer, RX_BUFFER_SIZE);*/
 	printf("=======demarage Systeme=======\r\n");
+		uint8_t bmp280_ctrl =0;
+		uint8_t reg1 = BMP280_CTRL_MES_REG;
 
-	uint8_t reg = BMP280_ID_REG;
+		uint8_t buf[2];
 
-	uint8_t bmp280_id = 0;
+		buf[1]=reg1;
 
-	HAL_I2C_Master_Transmit(&hi2c1, BMP280_I2C_ADDRESS, &reg, 1, HAL_MAX_DELAY);
+		buf[2]=0x57;
 
-	HAL_I2C_Master_Receive(&hi2c1, BMP280_I2C_ADDRESS, &bmp280_id, 1, HAL_MAX_DELAY);
+		HAL_I2C_Master_Transmit(&hi2c1, BMP280_I2C_ADDRESS, buf, 2, HAL_MAX_DELAY);
 
-	printf("registre ID: 0x%02X\r\n", bmp280_id);
+		HAL_I2C_Master_Transmit(&hi2c1, BMP280_I2C_ADDRESS, &reg1, 1, HAL_MAX_DELAY);
+
+		HAL_I2C_Master_Receive(&hi2c1, BMP280_I2C_ADDRESS, &bmp280_ctrl, 1, HAL_MAX_DELAY);
+
+		printf("Valeur du registre de contrôle (0xF4) : 0x%02X\r\n", bmp280_ctrl);
 
 
 	/* USER CODE END 2 */
