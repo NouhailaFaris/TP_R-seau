@@ -1,4 +1,4 @@
-# TP_Réseau
+# TP_Bus et réseaux industriels
 
 # Réaliser par :
 
