@@ -317,7 +317,7 @@ python3 stm32_communication.py
 
 ![image](https://github.com/user-attachments/assets/22a18b4a-ed37-4c0c-b799-c39519beeb05)
 
-### Résultat:
+
 
  ## TP 3: Développement d'une interface REST sur le Raspberry
  
@@ -560,24 +560,6 @@ if __name__ == '__main__':
 
 ```
 
-***Teste des Méthodes avec curl ou RESTED***
-GET : Obtenir une ressource
-```
-curl -X GET http://localhost:5000/api/welcome/1
-```
-POST : Créer une nouvelle ressource
-```
-curl -X POST -H "Content-Type: application/json" -d '{"message": "Bienvenue"}' http://localhost:5000/api/welcome/2
-```
-PUT : Mettre à jour une ressource existante
-```
-curl -X PUT -H "Content-Type: application/json" -d '{"message": "Bienvenue mise à jour"}' http://localhost:5000/api/welcome/2
-```
-DELETE : Supprimer une ressource
-```
-curl -X DELETE http://localhost:5000/api/welcome/2
-```
-
 # Tp4_Bus CAN
 
 ##  Objectif: Développement d'une API Rest et mise en place d'un périphérique sur bus CAN
@@ -593,8 +575,6 @@ curl -X DELETE http://localhost:5000/api/welcome/2
 ##  Interfaçage avec le capteur:
 
 ### Test et validation :
-
-**Cette étape est validé par le prof** 
 
 ![image](https://github.com/user-attachments/assets/fb93f9e2-8de0-4058-938c-9c30ec7eeec7)
 
