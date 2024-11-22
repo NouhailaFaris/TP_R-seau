@@ -331,6 +331,8 @@ if __name__ == "__main__":
 ```
 python3 stm32_communication.py
 ```
+### Résultat:
+
 ![image](https://github.com/user-attachments/assets/22a18b4a-ed37-4c0c-b799-c39519beeb05)
 
 ### Résultat:
