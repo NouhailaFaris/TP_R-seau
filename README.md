@@ -620,7 +620,7 @@ curl -X DELETE http://localhost:5000/api/welcome/2
 # Objectif: Faire marcher ensemble les TP 1, 2, 3 et 4
 ### Mesures de température et de pression sur I²C par le STM32
 
-![image](https://github.com/user-attachments/assets/2d6e6b36-20b6-44f5-a11b-88a4bfdd816c)
+ ![image](https://github.com/user-attachments/assets/136f1959-bfd9-4d44-8567-f35044e979a9)
 
 ### Communication série entre la STM32 et le Raspberry PI zero: implémentation du protocole proposé au TP2.4
 
