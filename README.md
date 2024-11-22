@@ -207,45 +207,27 @@ sudo apt install minicom
 Le code suivant a été écrit pour gérer les commandes reçues via UART et répondre conformément au protocole défini :
 
 ```
-void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart) {
-	if (huart->Instance == UART4) {
-		printf("Commande reçue : %s\r\n", rxBuffer);
-    	handleCommand(rxBuffer);
-
-        memset(rxBuffer, 0, RX_BUFFER_SIZE);
-
-
-        HAL_UART_Receive_IT(&huart4, (uint8_t *)rxBuffer, RX_BUFFER_SIZE);
-    }
-}
-
-void handleCommand(char *command) {
+void handleCommand(char *command, BMP280_S32_t *comp_temp, BMP280_U32_t *comp_press) {
     if (strncmp(command, "GET_T", 5) == 0) {
-        // Affiche la température correctement formatée
-        snprintf(txBuffer, sizeof(txBuffer), "T=+%dC\r\n", temperature);  // Utilisation correcte du format %f
+        // Calcul de la température compensée
+        *comp_temp = bmp280_compensate_T_int32(raw_temp);
+        float temperature = *comp_temp / 100.0; // Conversion en °C
+        snprintf(txBuffer, sizeof(txBuffer), "T=%.2f°C\r\n", temperature);
+        HAL_UART_Transmit(&huart4, (uint8_t *)txBuffer, strlen(txBuffer), HAL_MAX_DELAY);
     } else if (strncmp(command, "GET_P", 5) == 0) {
-        snprintf(txBuffer, sizeof(txBuffer), "P=%dPa\r\n", pression);
-    } else if (strncmp(command, "SET_K=", 6) == 0) {
-        sscanf(command + 6, "%d", &K_value);
-        snprintf(txBuffer, sizeof(txBuffer), "SET_K=OK\r\n");
-    } else if (strncmp(command, "GET_K", 5) == 0) {
-        snprintf(txBuffer, sizeof(txBuffer), "K=%d.%04d\r\n", K_value / 100, K_value % 100);
-    } else if (strncmp(command, "GET_A", 5) == 0) {
-        snprintf(txBuffer, sizeof(txBuffer), "A=%.4f\r\n", angle);
+        // Calcul de la pression compensée
+        *comp_press = bmp280_compensate_P_int64(raw_press);
+        snprintf(txBuffer, sizeof(txBuffer), "P=%ldPa\r\n", *comp_press);
+        HAL_UART_Transmit(&huart4, (uint8_t *)txBuffer, strlen(txBuffer), HAL_MAX_DELAY);
     } else {
         snprintf(txBuffer, sizeof(txBuffer), "Unknown Command\r\n");
+        HAL_UART_Transmit(&huart4, (uint8_t *)txBuffer, strlen(txBuffer), HAL_MAX_DELAY);
     }
-
-    // Envoie la réponse via UART4
-    HAL_UART_Transmit(&huart4, (uint8_t *)txBuffer, strlen(txBuffer), HAL_MAX_DELAY);
-
-    // Relance la réception UART après traitement de la commande
-    HAL_UART_Receive_IT(&huart4, (uint8_t *)rxBuffer, RX_BUFFER_SIZE);
-}
 ```
 **Test depuis le Raspberry Pi**
 
-![WhatsApp Image 2024-11-15 at 16 45 18](https://github.com/user-attachments/assets/9eb22027-5172-4de2-b7ee-014134e29fcc)
+![image](https://github.com/user-attachments/assets/d68976d3-86b3-4700-bb16-c59c31e758a4)
+
 
 ### Commande depuis Python:
 
